@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="dark">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
+  <!-- <link rel="stylesheet" href="quartz.bootstrap.min.css"> -->
+  <!-- FIX THIS -->
+  <style>
+    textarea{resize: none;}
+    .profile_pic{
+      width: 6rem;
+      height: 6rem;
+      border-radius: 50%;
+    }
+    .post_pic{
+      max-width: 35vw;
+      max-height: 40vh;
+    }
+  </style>
+  <!-- <link rel="stylesheet"  type="text/css" href="{{url_for('.static', filename='style.css')}}"> -->
+  <title>Friendbookspacetter</title>
+</head>
+
+<!-- post filters need to be auto-populated -->
+
+<body>
+  <!-- navbar -->
+  <nav class="navbar navbar-expand-lg bg-secondary justify-content-between py-0 px-5 shadow sticky-top text-dark">
+    <div class="leftContent d-flex ms-5 mt-2">
+      <!-- could replace this with just a clickable logo -->
+      <p>Logo</p>
+      <p class="mx-2">|</p>
+      <a href="#" class="nav-link">Home</a>
+    </div>
+    <div class="searchbar d-flex">
+      <input type="text" name="searchbar" id="searchbar" placeholder="Search..." class="form-control me-2">
+      <button class="btn btn-primary">Search</button>
+    </div>
+    <div class="nav-item dropdown me-5">
+      <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Account</a>
+      <ul class="dropdown-menu">
+        <li><a class="dropdown-item" href="/profile" target="_blank">Profile</a></li>
+        <li><a class="dropdown-item" href="/friends_list" target="_blank">Friends List</a></li>
+        <li><a class="dropdown-item" href="/settings" target="_blank">Settings</a></li>
+        <li><a class="dropdown-item" href="/sign_out" target="_self">Sign Out</a></li>
+      </ul>
+    </div>
+  </nav>
+  <!-- main content -->
+  <div class="container d-flex my-4">
+    <!-- left column -->
+    <div class="col-8 me-5">
+      <div class="new_post">
+        <p>Create a post</p>
+        <textarea name="new_post" id="new_post" class="form-control" placeholder="Start Typing"></textarea>
+        <div class="d-flex m-2 justify-content-end">
+          <button class="btn btn-primary mx-2">add image</button>
+          <button class="btn btn-primary">post</button>
+        </div>
+      </div>
+      <!-- text post -->
+      <div class="text_only_post d-flex mt-5">
+        <img src="placeholderPFP.jpg" alt="placeholder_profile_pic" class="profile_pic">
+        <div class="post ms-3">
+          <p>Username</p>
+          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eaque consequatur quis quam quibusdam voluptas animi vitae, quaerat explicabo consequuntur, illo maxime accusamus neque obcaecati nostrum, consectetur facere. Molestiae, ab itaque.</p>
+          <div class="d-flex justify-content-between">
+            <div class="d-flex">
+              <p># 🔥</p>
+              <p class="ms-3"># comments</p>
+            </div>
+            <div class="d-flex">
+              <button class="btn btn-primary me-2">🔥</button>
+              <button class="btn btn-primary">comment</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- image post -->
+      <div class="image_post d-flex mt-5">
+        <img src="placeholderPFP.jpg" alt="placeholder_profile_pic" class="profile_pic">
+        <div class="post ms-3">
+          <p>Username</p>
+          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eaque consequatur quis quam quibusdam voluptas animi vitae, quaerat explicabo consequuntur.</p>
+          <img src="placeholderPost.jpg" alt="placeholder_post" class="post_pic">
+          <div class="d-flex justify-content-between mt-2">
+            <div class="d-flex">
+              <p># 🔥</p>
+              <p class="ms-3"># comments</p>
+            </div>
+            <div class="d-flex">
+              <button class="btn btn-primary me-2">🔥</button>
+              <button class="btn btn-primary">comment</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- text post -->
+      <div class="text_only_post d-flex mt-5">
+        <img src="placeholderPFP.jpg" alt="placeholder_profile_pic" class="profile_pic">
+        <div class="post ms-3">
+          <p>Username</p>
+          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eaque consequatur quis quam quibusdam voluptas animi vitae, quaerat explicabo consequuntur, illo maxime accusamus neque obcaecati nostrum, consectetur facere. Molestiae, ab itaque.</p>
+          <div class="d-flex justify-content-between">
+            <div class="d-flex">
+              <p># 🔥</p>
+              <p class="ms-3"># comments</p>
+            </div>
+            <div class="d-flex">
+              <button class="btn btn-primary me-2">🔥</button>
+              <button class="btn btn-primary">comment</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- text post -->
+      <div class="text_only_post d-flex mt-5">
+        <img src="placeholderPFP.jpg" alt="placeholder_profile_pic" class="profile_pic">
+        <div class="post ms-3">
+          <p>Username</p>
+          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eaque consequatur quis quam quibusdam voluptas animi vitae, quaerat explicabo consequuntur, illo maxime accusamus neque obcaecati nostrum, consectetur facere. Molestiae, ab itaque.</p>
+          <div class="d-flex justify-content-between">
+            <div class="d-flex">
+              <p># 🔥</p>
+              <p class="ms-3"># comments</p>
+            </div>
+            <div class="d-flex">
+              <button class="btn btn-primary me-2">🔥</button>
+              <button class="btn btn-primary">comment</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- right column -->
+    <div class="col-4 ms-5">
+      <form action="CHANGE_LATER" method="post">
+        <!-- show by -->
+        <h4>Show Posts By:</h4>
+        <input type="radio" name="sort" id="chronological_sort" value="chronological" class="me-1">
+        <label for="chronological_sort">Chronological</label><br>
+        <input type="radio" name="sort" id="lit_sort" value="lit" class="me-1">
+        <label for="lit_sort">Most 🔥</label><br>
+        <input type="radio" name="sort" id="comments_sort" value="comments" class="me-1">
+        <label for="comments_sort">Most Comments</label><br>
+        <input type="radio" name="sort" id="ratio_sort" value="ratio" class="me-1">
+        <label for="ratio_sort">Biggest Ratio</label>
+        <!-- show from -->
+        <h4 class="mt-3">Show Posts From:</h4>
+        <input type="radio" name="show_time" id="show_today" value="today" class="me-1">
+        <label for="show_today">Today</label><br>
+        <input type="radio" name="show_time" id="show_week" value="week" class="me-1">
+        <label for="show_week">This Week</label><br>
+        <input type="radio" name="show_time" id="show_month" value="month" class="me-1">
+        <label for="show_month">This Month</label><br>
+        <input type="radio" name="show_time" id="show_all" value="all" class="me-1">
+        <label for="show_all">All Time</label>
+        <!-- show users -->
+        <h4 class="mt-3">Show Users:</h4>
+        <input type="checkbox" name="show_users" id="friends" value="friends" class="me-1">
+        <label for="friends">Friends</label><br>
+        <input type="checkbox" name="show_users" id="friends_of_friends" value="friends_of_friends" class="me-1">
+        <label for="friends_of_friends">Friends of Friends</label><br>
+        <input type="checkbox" name="show_users" id="celebrities" value="celebrities" class="me-1">
+        <label for="celebrities">Celebrities</label><br>
+
+        <!-- everybody button disabled until "select all" functionality is implemented -->
+        <!-- https://stackoverflow.com/questions/386281/how-to-implement-select-all-check-box-in-html -->
+        <!-- <input type="checkbox" name="show_users" id="everybody" value="everybody" class="me-1"> -->
+        <!-- <label for="everybody">Everybody</label><br> -->
+
+        <!-- button -->
+        <button class="btn btn-primary mt-3">Update Feed</button>
+      </form>
+    </div>
+  </div>
+  <!-- bootstrap script for dropdown menu -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/js/bootstrap.bundle.min.js"
+    integrity="sha384-qKXV1j0HvMUeCBQ+QVp7JcfGl760yU08IQ+GpUo5hlbpg51QRiuqHAJz8+BrxE/N"
+    crossorigin="anonymous"></script>
+</body>
+
+</html>

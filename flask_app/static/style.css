@@ -1,0 +1,12 @@
+textarea{resize: none;}
+
+.profile_pic{
+  width: 6rem;
+  height: 6rem;
+  border-radius: 50%;
+}
+
+.post_pic{
+  max-width: 35vw;
+  max-height: 40vh;
+}
