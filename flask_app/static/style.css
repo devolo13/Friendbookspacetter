@@ -18,3 +18,11 @@ textarea{
   max-width: 35vw;
   max-height: 40vh;
 }
+
+.post_interactions{
+  width: 100%;
+}
+
+.post{
+  width: 100%;
+}

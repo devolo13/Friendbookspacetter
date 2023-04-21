@@ -1,6 +1,7 @@
 from flask_app import app
 from flask import render_template, redirect, request, flash, session
 from flask_app.models.user_model import User
+from flask_app.models.post_model import Post
 from flask_bcrypt import Bcrypt
 
 bcrypt = Bcrypt(app)
@@ -76,8 +77,10 @@ def update_user():
 def profile_template(id):
     if not 'user_id' in session:
         return redirect('/')
-    user = User.get_by_id(session['user_id'])
-    return render_template('profile.html', user=user)
+    user = User.get_by_id(id)
+    all_posts = Post.get_by_uploader(id)
+    # popular_post = Post.get_most_popular(id)
+    return render_template('profile.html', user=user, all_posts=all_posts)
 
 
 # template for a user's settings page

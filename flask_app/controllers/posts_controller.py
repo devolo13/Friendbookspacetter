@@ -7,13 +7,24 @@ from flask_app.models.user_model import User
 # home page showing all posts
 @app.route('/home')
 def home_page():
-    return render_template('home.html')
+    all_posts = Post.get_all()
+    Post.get_lits(1)
+    return render_template('home.html', all_posts=all_posts)
 
 
 # search page showing results
 @app.route('/search')
 def search_page():
     return render_template('search.html')
+
+
+# route for creating a new post and redirecting back to home
+@app.route('/add_post/<route>', methods=['POST'])
+def add_post(route):
+    print('inside the add_post function')
+    data = {**request.form}
+    Post.save(data)
+    return redirect(f'/{route}')
 
 
 # dashboard page showing all magazines
