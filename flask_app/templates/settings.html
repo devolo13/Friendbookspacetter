@@ -5,29 +5,12 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-KK94CHFLLe+nY2dmCWGMq91rCGa5gtU4mk92HdvYe+M/SXH301p5ILy+dN9+nJOZ" crossorigin="anonymous">
-  <!-- <link rel="stylesheet" href="quartz.bootstrap.min.css"> -->
-  <!-- FIX THIS -->
-  <style>
-    textarea{resize: none;}
-    .profile_pic{
-      width: 6rem;
-      height: 6rem;
-      border-radius: 50%;
-    }
-    .main_profile_pic{
-      width: 20rem;
-      height: 20rem;
-      border-radius: 50%;
-    }
-    .post_pic{
-      max-width: 35vw;
-      max-height: 40vh;
-    }
-  </style>
-  <!-- <link rel="stylesheet"  type="text/css" href="{{url_for('.static', filename='style.css')}}"> -->
+  <link rel="stylesheet"  type="text/css" href="{{url_for('.static', filename='default.bootstrap.min.css')}}">
+  <link rel="stylesheet"  type="text/css" href="{{url_for('.static', filename='style.css')}}">
   <title>Username's Profile</title>
 </head>
+
+<!-- expects user object -->
 
 <body>
   <!-- navbar -->
@@ -36,7 +19,7 @@
       <!-- could replace this with just a clickable logo -->
       <p>Logo</p>
       <p class="mx-2">|</p>
-      <a href="#" class="nav-link">Home</a>
+      <a href="/home" class="nav-link">Home</a>
     </div>
     <div class="searchbar d-flex">
       <input type="text" name="searchbar" id="searchbar" placeholder="Search..." class="form-control me-2">
@@ -45,9 +28,9 @@
     <div class="nav-item dropdown me-5">
       <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Account</a>
       <ul class="dropdown-menu">
-        <li><a class="dropdown-item" href="/profile" target="_blank">Profile</a></li>
-        <li><a class="dropdown-item" href="/friends_list" target="_blank">Friends List</a></li>
-        <li><a class="dropdown-item" href="/settings" target="_blank">Settings</a></li>
+        <li><a class="dropdown-item" href="/profile/{{session['user_id']}}" target="_self">Profile</a></li>
+        <li><a class="dropdown-item" href="/friends" target="_self">Friends List</a></li>
+        <li><a class="dropdown-item" href="/settings" target="_self">Settings</a></li>
         <li><a class="dropdown-item" href="/sign_out" target="_self">Sign Out</a></li>
       </ul>
     </div>
@@ -58,7 +41,7 @@
     <div class="col-4 me-5">
       <h1>Settings:</h1>
       <div class="d-flex justify-content-center">
-        <img src="placeholderPFP.jpg" alt="placeholder profile picture" class="main_profile_pic mt-3">
+        <img src="{{url_for('.static', filename='placeholderPFP.jpg')}}" alt="placeholder profile picture" class="main_profile_pic mt-3">
       </div>
       <div class="d-flex justify-content-center">
         <button class="btn btn-primary mt-3">Change Profile Picture</button>
@@ -69,10 +52,11 @@
     <!-- right column -->
     <div class="col-8 ms-5">
       <form action="/update_user_settings" method="post">
+        <input type="hidden" name="user_id" value="{{user.id}}">
         <label for="username" class="mt-4 mb-2">Username:</label>
-        <input type="text" name="username" id="username" class="form-control">
+        <input type="text" name="username" id="username" class="form-control" value="{{user.username}}">
         <label for="bio" class="mt-4 mb-2">Profile Bio:</label>
-        <textarea name="bio" id="bio" cols="30" rows="6" class="form-control"></textarea>
+        <textarea name="bio" id="bio" cols="30" rows="6" class="form-control">{{user.bio}}</textarea>
         <label for="theme" class="mt-4 mb-2">Theme:</label>
         <select name="theme" id="theme" class="form-select">
           <option value="dark">Dark</option>

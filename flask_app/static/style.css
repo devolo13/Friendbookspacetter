@@ -1,4 +1,6 @@
-textarea{resize: none;}
+textarea{
+  resize: none;
+}
 
 .profile_pic{
   width: 6rem;

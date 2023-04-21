@@ -28,8 +28,7 @@ def register_new_user():
         data['password'] = bcrypt.generate_password_hash(data['password'])
         user = User.save(data)
         session['user_id'] = user.id
-        session['user_name'] = f'{user.first_name} {user.last_name}'
-        return redirect('/dashboard')
+        return redirect('/home')
     else:
         # if user input was not valid, show errors and redirect back to registration/login page
         return redirect('/')
@@ -50,8 +49,7 @@ def login_user():
         if bcrypt.check_password_hash(user.password, data['password']):
             # password is correct. store the user's id in session and redirect them to the recipes page
             session['user_id'] = user.id
-            session['user_name'] = f'{user.first_name} {user.last_name}'
-            return redirect('/dashboard')
+            return redirect('/home')
         else:
             # password is incorrect. show them an error and ask them to log in again
             flash('Incorrect password', 'login_password')
@@ -62,19 +60,46 @@ def login_user():
 
 
 # route for updating user and redirecting to their account page
-@app.route('/update_user', methods=['POST'])
+@app.route('/update_user_settings', methods=['POST'])
 def update_user():
     data = {
         **request.form,
-        'id': int(request.form['id'])
+        'id': session['user_id']
     }
     if User.validate_update_inputs(data):
         User.update(data)
-        session['user_name'] = f'{request.form["first_name"]} {request.form["last_name"]}'
-    return redirect('/account')
+    return redirect(f'/profile/{session["user_id"]}')
+
+
+# template for user's profile page
+@app.route('/profile/<int:id>')
+def profile_template(id):
+    if not 'user_id' in session:
+        return redirect('/')
+    user = User.get_by_id(session['user_id'])
+    return render_template('profile.html', user=user)
+
+
+# template for a user's settings page
+@app.route('/settings')
+def user_settings():
+    if not 'user_id' in session:
+        return redirect('/')
+    user = User.get_by_id(session['user_id'])
+    return render_template('settings.html', user=user)
+
+
+# template for showing a user's friends
+@app.route('/friends')
+def friends_page():
+    if not 'user_id' in session:
+        return redirect('/')
+    return render_template('friends_list.html')
 
 
 # route for logging out a user and redirecting to login page
+@app.route('/signout')
+@app.route('/sign_out')
 @app.route('/logout')
 def log_out_a_user():
     session.clear()

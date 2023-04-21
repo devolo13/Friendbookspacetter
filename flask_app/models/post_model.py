@@ -3,7 +3,7 @@ from flask_app import DATABASE
 from flask import flash
 
 
-class Magazine:
+class Post:
     def __init__(self, data):
         self.id = data['id']
         self.title = data['title']

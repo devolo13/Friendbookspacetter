@@ -4,4 +4,4 @@ app = Flask(__name__)
 app.secret_key = 'Harry Potter was mid'
 
 # NEED TO CHANGE DATABASE
-DATABASE = 'magazines_schema'
+DATABASE = 'social_media_schema'

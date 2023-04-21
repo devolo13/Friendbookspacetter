@@ -1,7 +1,19 @@
 from flask_app import app
 from flask import render_template, redirect, request, session
-from flask_app.models.magazine_model import Magazine
+from flask_app.models.post_model import Post
 from flask_app.models.user_model import User
+
+
+# home page showing all posts
+@app.route('/home')
+def home_page():
+    return render_template('home.html')
+
+
+# search page showing results
+@app.route('/search')
+def search_page():
+    return render_template('search.html')
 
 
 # dashboard page showing all magazines
@@ -49,20 +61,6 @@ def new_magazine_template():
     if not 'user_id' in session:
         return redirect('/')
     return render_template('add_magazine.html')
-
-
-# template for user's account page
-@app.route('/account')
-def account_template():
-    if not 'user_id' in session:
-        return redirect('/')
-    user_id = int(session['user_id'])
-    user = User.get_by_id(user_id)
-    magazines = Magazine.get_by_uploader(user_id)
-    subs = {}
-    for magazine in magazines:
-        subs[magazine.title] = len(Magazine.get_subscribers(magazine.id))
-    return render_template('account.html', user=user, magazines=magazines, subs=subs)
 
 
 # route for deleting a magazine and redirecting to user's account page

@@ -14,6 +14,8 @@ class User:
         self.email = data['email']
         self.password = data['password']
         self.bio = data['bio']
+        self.theme = data['theme']
+        self.celebrity = data['celebrity']
 
     # method for adding a new user. returns that user's object
     @classmethod
@@ -71,24 +73,28 @@ class User:
         return cls(results[0])
 
     # should create a method for checking if a username is in use to prevent duplicates
-    # NOT FINISHED
     @classmethod
-    def check_username(cls, data):
+    def check_username(cls, username):
         # check if username exists in database. if it exists, return that user's object, otherwise return false
-        return False
+        data = {'username': username}
+        query = 'SELECT * from users where username = %(username)s;'
+        results = connectToMySQL(DATABASE).query_db(query, data)
+        if results == ():
+            return False
+        return cls(results[0])
 
     # method for validating user registration inputs. returns True if valid, False if invalid. creates flash messages along the way
     @staticmethod
     def validate_registration_inputs(data):
         valid_inputs = True
         # validate username length
-        if (len(data['first_name']) < 2):
+        if (len(data['username']) < 2):
             flash('Username too short. Please input your username', 'register_username')
             valid_inputs = False
         # validate username doesn't exist in db
-        if not User.check_username(data['username']) == False:
-            flash('This username is already in use', 'register_username')
-            valid_inputs = False
+        # if not User.check_username(data['username']) == False:
+        #     flash('This username is already in use', 'register_username')
+        #     valid_inputs = False
         # validate email format
         if not re.compile(r'^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]+$').match(data['email']):
             flash('Please input a valid email address', 'register_email')
