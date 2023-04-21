@@ -6,6 +6,12 @@ textarea{resize: none;}
   border-radius: 50%;
 }
 
+.main_profile_pic{
+  width: 20rem;
+  height: 20rem;
+  border-radius: 50%;
+}
+
 .post_pic{
   max-width: 35vw;
   max-height: 40vh;

@@ -15,19 +15,16 @@
       height: 6rem;
       border-radius: 50%;
     }
-    .main_profile_pic{
-      width: 20rem;
-      height: 20rem;
-      border-radius: 50%;
-    }
     .post_pic{
       max-width: 35vw;
       max-height: 40vh;
     }
   </style>
   <!-- <link rel="stylesheet"  type="text/css" href="{{url_for('.static', filename='style.css')}}"> -->
-  <title>Username's Profile</title>
+  <title>Friendbookspacetter</title>
 </head>
+
+<!-- post filters need to be auto-populated -->
 
 <body>
   <!-- navbar -->
@@ -55,93 +52,110 @@
   <!-- main content -->
   <div class="container d-flex my-5">
     <!-- left column -->
-    <div class="col-4 me-5">
-      <img src="placeholderPFP.jpg" alt="placeholder profile picture" class="main_profile_pic ms-5">
-      <h3>Username</h3>
-      <p class="ms-4">Lorem ipsum dolor sit amet consectetur adipisicing elit. Voluptas eum recusandae placeat laboriosam eius magni, eveniet illo unde, ab, minus nostrum iste adipisci pariatur optio! Saepe aspernatur voluptas obcaecati illo!</p>
-      <button class="btn btn-primary">Add Friend</button>
-      <!-- spotify box here -->
-      <div class="spotify bg-warning mt-3 text-center text-dark" style="height: 30rem; border-radius: 2rem;"><h3>Spotify Placeholder</h3></div>
+    <div class="col-8 me-5">
+      <div class="refine_search">
+        <h4>Search Results:</h4>
+        <textarea name="new_post" id="new_post" class="form-control" placeholder="Refine Search..."></textarea>
+        <div class="d-flex m-2 justify-content-end">
+          <button class="btn btn-primary">Search</button>
+        </div>
+      </div>
+      <!-- single user -->
+      <div class="d-flex mt-5">
+        <img src="placeholderPFP.jpg" alt="placeholder_profile_pic" class="profile_pic">
+        <div class="ms-4">
+          <h3>Users' Name</h3>
+          <div class="d-flex mt-3">
+            <button class="btn btn-primary me-5">View Profile</button>
+            <button class="btn btn-primary">Unfriend</button>
+          </div>
+        </div>
+      </div>
+      <!-- single user -->
+      <div class="d-flex mt-5">
+        <img src="placeholderPFP.jpg" alt="placeholder_profile_pic" class="profile_pic">
+        <div class="ms-4">
+          <h3>Users' Name</h3>
+          <div class="d-flex mt-3">
+            <button class="btn btn-primary me-5">View Profile</button>
+            <button class="btn btn-primary">Unfriend</button>
+          </div>
+        </div>
+      </div>
+      <!-- text post -->
+      <div class="text_only_post d-flex mt-5">
+        <img src="placeholderPFP.jpg" alt="placeholder_profile_pic" class="profile_pic">
+        <div class="post ms-3">
+          <p>Username</p>
+          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eaque consequatur quis quam quibusdam voluptas animi vitae, quaerat explicabo consequuntur, illo maxime accusamus neque obcaecati nostrum, consectetur facere. Molestiae, ab itaque.</p>
+          <div class="d-flex justify-content-between">
+            <div class="d-flex">
+              <p># 🔥</p>
+              <p class="ms-3"># comments</p>
+            </div>
+            <div class="d-flex">
+              <button class="btn btn-primary me-2">🔥</button>
+              <button class="btn btn-primary">comment</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- image post -->
+      <div class="image_post d-flex mt-5">
+        <img src="placeholderPFP.jpg" alt="placeholder_profile_pic" class="profile_pic">
+        <div class="post ms-3">
+          <p>Username</p>
+          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eaque consequatur quis quam quibusdam voluptas animi vitae, quaerat explicabo consequuntur.</p>
+          <img src="placeholderPost.jpg" alt="placeholder_post" class="post_pic">
+          <div class="d-flex justify-content-between mt-2">
+            <div class="d-flex">
+              <p># 🔥</p>
+              <p class="ms-3"># comments</p>
+            </div>
+            <div class="d-flex">
+              <button class="btn btn-primary me-2">🔥</button>
+              <button class="btn btn-primary">comment</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- text post -->
+      <div class="text_only_post d-flex mt-5">
+        <img src="placeholderPFP.jpg" alt="placeholder_profile_pic" class="profile_pic">
+        <div class="post ms-3">
+          <p>Username</p>
+          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eaque consequatur quis quam quibusdam voluptas animi vitae, quaerat explicabo consequuntur, illo maxime accusamus neque obcaecati nostrum, consectetur facere. Molestiae, ab itaque.</p>
+          <div class="d-flex justify-content-between">
+            <div class="d-flex">
+              <p># 🔥</p>
+              <p class="ms-3"># comments</p>
+            </div>
+            <div class="d-flex">
+              <button class="btn btn-primary me-2">🔥</button>
+              <button class="btn btn-primary">comment</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
     <!-- right column -->
-    <div class="col-8 ms-5">
-      <!-- new post box -->
-      <div class="new_post">
-        <p>Create a post</p>
-        <textarea name="new_post" id="new_post" class="form-control" placeholder="Start Typing"></textarea>
-        <div class="d-flex m-2 justify-content-end">
-          <button class="btn btn-primary mx-2">add image</button>
-          <button class="btn btn-primary">post</button>
-        </div>
-      </div>
-      <h2>Most Popular Post:</h2>
-      <!-- image post -->
-      <div class="image_post d-flex mt-4 ms-3">
-        <div class="post ms-3">
-          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eaque consequatur quis quam quibusdam voluptas animi vitae, quaerat explicabo consequuntur.</p>
-          <img src="placeholderPost.jpg" alt="placeholder_post" class="post_pic">
-          <div class="d-flex justify-content-between mt-2">
-            <div class="d-flex">
-              <p># 🔥</p>
-              <p class="ms-3"># comments</p>
-            </div>
-            <div class="d-flex">
-              <button class="btn btn-primary me-2">🔥</button>
-              <button class="btn btn-primary">comment</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <h2 class="mt-5">Most Recent Posts:</h2>
-      <!-- text post -->
-      <div class="text_only_post d-flex mt-4 ms-3">
-        <div class="post ms-3">
-          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eaque consequatur quis quam quibusdam voluptas animi vitae, quaerat explicabo consequuntur, illo maxime accusamus neque obcaecati nostrum, consectetur facere. Molestiae, ab itaque.</p>
-          <div class="d-flex justify-content-between">
-            <div class="d-flex">
-              <p># 🔥</p>
-              <p class="ms-3"># comments</p>
-            </div>
-            <div class="d-flex">
-              <button class="btn btn-primary me-2">🔥</button>
-              <button class="btn btn-primary">comment</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- text post -->
-      <div class="text_only_post d-flex mt-5 ms-3">
-        <div class="post ms-3">
-          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eaque consequatur quis quam quibusdam voluptas animi vitae, quaerat explicabo consequuntur, illo maxime accusamus neque obcaecati nostrum, consectetur facere. Molestiae, ab itaque.</p>
-          <div class="d-flex justify-content-between">
-            <div class="d-flex">
-              <p># 🔥</p>
-              <p class="ms-3"># comments</p>
-            </div>
-            <div class="d-flex">
-              <button class="btn btn-primary me-2">🔥</button>
-              <button class="btn btn-primary">comment</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- image post -->
-      <div class="image_post d-flex mt-5 ms-3">
-        <div class="post ms-3">
-          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eaque consequatur quis quam quibusdam voluptas animi vitae, quaerat explicabo consequuntur.</p>
-          <img src="placeholderPost.jpg" alt="placeholder_post" class="post_pic">
-          <div class="d-flex justify-content-between mt-2">
-            <div class="d-flex">
-              <p># 🔥</p>
-              <p class="ms-3"># comments</p>
-            </div>
-            <div class="d-flex">
-              <button class="btn btn-primary me-2">🔥</button>
-              <button class="btn btn-primary">comment</button>
-            </div>
-          </div>
-        </div>
-      </div>
+    <div class="col-4 ms-5">
+      <form action="CHANGE_LATER" method="post">
+        <!-- filter -->
+        <h4>Show Posts By:</h4>
+        <input type="radio" name="filter" id="none" value="none" class="me-1">
+        <label for="none">None</label><br>
+        <input type="radio" name="filter" id="friends_profiles" value="friends_profiles" class="me-1">
+        <label for="friends">Friends' Profiles</label><br>
+        <input type="radio" name="filter" id="all_profiles" value="all_profiles" class="me-1">
+        <label for="all_profiles">All Profiles</label><br>
+        <input type="radio" name="filter" id="friends_posts" value="friends_posts" class="me-1">
+        <label for="friends_posts">Friends' Posts</label><br>
+        <input type="radio" name="filter" id="all_posts" value="all_posts" class="me-1">
+        <label for="all_posts">All Posts</label><br>
+        <!-- button -->
+        <button class="btn btn-primary mt-3">Filter Search</button>
+      </form>
     </div>
   </div>
   <!-- bootstrap script for dropdown menu -->
