@@ -1,5 +1,5 @@
 from flask_app import app
-from flask import render_template, redirect, request, session
+from flask import render_template, redirect, request, session, flash
 from flask_app.models.post_model import Post
 from flask_app.models.user_model import User
 
@@ -8,7 +8,6 @@ from flask_app.models.user_model import User
 @app.route('/home')
 def home_page():
     all_posts = Post.get_all()
-    Post.get_lits(1)
     return render_template('home.html', all_posts=all_posts)
 
 
@@ -18,60 +17,49 @@ def search_page():
     return render_template('search.html')
 
 
-# route for creating a new post and redirecting back to home
+# route for creating a new post and redirecting back to the page the user was on
+@app.route('/add_post/<route>/<user_id>', methods=['POST'])
 @app.route('/add_post/<route>', methods=['POST'])
-def add_post(route):
-    print('inside the add_post function')
-    data = {**request.form}
-    Post.save(data)
-    return redirect(f'/{route}')
+def add_post(route, user_id = None):
+    if not request.form['content'] == '':
+        data = {**request.form}
+        Post.save(data)
+    elif request.form['content'] == '':
+        flash('Post too short', 'new_post')
+    if user_id == None:
+        return redirect(f'/{route}')
+    return redirect(f'/{route}/{user_id}')
 
 
-# dashboard page showing all magazines
-@app.route('/dashboard')
-def dashboard():
+# route for adding a lit and redirecting back to the page the user was on
+@app.route('/add_lit/<int:post_id>/<route>/<user_id>')
+@app.route('/add_lit/<int:post_id>/<route>')
+def add_lit(post_id, route, user_id = None):
+    Post.add_lit(post_id, session['user_id'])
+    if user_id == None:
+        return redirect(f'/{route}')
+    return redirect(f'/{route}/{user_id}')
+
+
+# route for adding a comment and redirecting to that post's page
+@app.route('/add_comment', methods=['POST'])
+def add_comment():
+    if not request.form['content'] == '':
+        data = {**request.form}
+        Post.add_comment(data)
+    elif request.form['content'] == '':
+        flash('comment cannot be empty', 'new_comment')
+    return redirect(f'/post/{request.form["post_id"]}')
+
+
+# page showing a single post
+@app.route('/post/<int:post_id>')
+def single_post_page(post_id):
     if not 'user_id' in session:
         return redirect('/')
-    user_id = session['user_id']
-    user_name = session['user_name']
-    magazines = Magazine.get_all()
-    subscribed_magazines = Magazine.get_subscribed_mags(user_id)
-    return render_template('all_magazines.html', user_id=user_id, user_name=user_name, magazines=magazines, subscribed_magazines=subscribed_magazines)
-
-
-# page showing a single magazine
-@app.route('/show/<int:mag_id>')
-def single_mag_page(mag_id):
-    if not 'user_id' in session:
-        return redirect('/')
-    user_id = session['user_id']
-    user_name = session['user_name']
-    magazine = Magazine.get_by_id(mag_id)
-    subscribers = Magazine.get_subscribers(mag_id)
-    print(subscribers)
-    return render_template('single_magazine.html', user_id=user_id, user_name=user_name, magazine=magazine, subscribers=subscribers)
-
-
-# route for creating a new magazine
-@app.route('/add_magazine', methods=['POST'])
-def add_magazine():
-    data = {
-        **request.form,
-        'uploader_id': session['user_id'],
-        'uploader_name': session['user_name']
-    }
-    if Magazine.validate(data):
-        Magazine.save(data)
-        return redirect('/dashboard')
-    return redirect('/new')
-
-
-# template for adding a new magazine
-@app.route('/new')
-def new_magazine_template():
-    if not 'user_id' in session:
-        return redirect('/')
-    return render_template('add_magazine.html')
+    post = Post.get_by_id(post_id)
+    comments = Post.get_all_comments(post_id)
+    return render_template('post.html', post=post, comments=comments)
 
 
 # route for deleting a magazine and redirecting to user's account page

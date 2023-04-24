@@ -9,7 +9,9 @@ class Post:
         self.poster_id = data['poster_id']
         self.content = data['content']
         self.poster_username = data['poster_username']
-        self.lits = Post.get_lits(self.id)
+        self.lit_users = Post.get_lit_users(data['id'])
+        self.lit_count = Post.get_lit_count(data['id'])
+        self.comments = Post.get_comment_count(data['id'])
 
     # method for adding a new post. returns that magazine's id
     # should validate content length before posting
@@ -26,7 +28,7 @@ class Post:
     # method for getting all posts. returns a list of post objects
     @classmethod
     def get_all(cls):
-        query = 'SELECT posts.id, poster_id, content, users.username as poster_username from posts LEFT JOIN users on users.id = posts.poster_id;'
+        query = 'SELECT posts.id, poster_id, content, users.username as poster_username from posts LEFT JOIN users on users.id = posts.poster_id ORDER BY posts.created_at desc;'
         results = connectToMySQL(DATABASE).query_db(query)
         all_posts = []
         for post in results:
@@ -37,7 +39,7 @@ class Post:
     @classmethod
     def get_by_id(cls, id):
         data = {'id': int(id)}
-        query = 'SELECT posts.id, poster_id, content, users.username as poster_name from posts LEFT JOIN users on users.id = posts.poster_id WHERE posts.id = %(id)s;'
+        query = 'SELECT posts.id, poster_id, content, users.username as poster_username from posts LEFT JOIN users on users.id = posts.poster_id WHERE posts.id = %(id)s;'
         results = connectToMySQL(DATABASE).query_db(query, data)
         return cls(results[0])
 
@@ -53,16 +55,71 @@ class Post:
         return all_posts
 
     # method for determining how many lit a post has. returns number of lits
-    # BROKEN. DON'T KNOW WHAT GETS RETURNED IF THERE ARE NO LITS
     @staticmethod
-    def get_lits(post_id):
+    def get_lit_count(post_id):
         data = {'post_id': int(post_id)}
-        query = 'SELECT count(user_id) FROM fires WHERE post_id = %(id)s GROUP BY post_id;'
-        lits = int(connectToMySQL(DATABASE).query_db(query, data)[0]['count(user_id)'])
-        # lits = connectToMySQL(DATABASE).query_db(query, data)
-        # if lits == {}:
-        #     return 0
+        query = 'SELECT count(user_id) FROM fires WHERE post_id = %(post_id)s GROUP BY post_id;'
+        lits = connectToMySQL(DATABASE).query_db(query, data)
+        if lits == ():
+            return 0
+        lits = lits[0]['count(user_id)']
         return lits
+
+    # method for determining a post's lits. returns array with each lit-ed user's id
+    @staticmethod
+    def get_lit_users(post_id):
+        data = {'post_id': int(post_id)}
+        query = 'SELECT user_id FROM fires WHERE post_id = %(post_id)s;'
+        lits = connectToMySQL(DATABASE).query_db(query, data)
+        users = []
+        for i in range(len(lits)):
+            users.append(lits[i]['user_id'])
+        return users
+
+    # method for adding a lit to a post. returns nothing
+    @staticmethod
+    def add_lit(post_id, user_id):
+        data = {
+            'post_id': post_id,
+            'user_id': user_id
+        }
+        query = 'INSERT into fires (post_id, user_id) VALUES (%(post_id)s, %(user_id)s);'
+        connectToMySQL(DATABASE).query_db(query, data)
+        return
+
+    # method for determining how many comments a post has. returns number of comments
+    @staticmethod
+    def get_comment_count(post_id):
+        data = {'post_id': int(post_id)}
+        query = 'SELECT count(id) FROM comments WHERE post_id = %(post_id)s GROUP BY post_id;'
+        comments = connectToMySQL(DATABASE).query_db(query, data)
+        if comments == ():
+            return 0
+        else:
+            comments = comments[0]['count(id)']
+        return comments
+
+    # method for getting all comments. returns a list of all comment objects
+    @staticmethod
+    def get_all_comments(post_id):
+        data = {'post_id': post_id}
+        query = 'SELECT username, content FROM comments LEFT JOIN users on users.id = commenter_id where post_id = %(post_id)s;'
+        results = connectToMySQL(DATABASE).query_db(query, data)
+        comments = []
+        for i in range(len(results)):
+            comments.append({
+                'commenter_username': results[i]['username'],
+                'content': results[i]['content']
+            })
+        return comments
+
+    # method for adding a comment to a post. returns nothing
+    @staticmethod
+    def add_comment(data):
+        print('adding a comment')
+        query = 'INSERT into comments (post_id, commenter_id, content) VALUES (%(post_id)s, %(commenter_id)s, %(content)s);'
+        connectToMySQL(DATABASE).query_db(query, data)
+        return
 
     # method for adding a user to another user's friends. returns nothing
     @classmethod

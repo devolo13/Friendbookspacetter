@@ -40,42 +40,22 @@
   <!-- main content -->
   <div class="container my-5">
     <!-- friends -->
-    <h2>You have # friends</h2>
-    <!-- single user -->
-    <div class="d-flex my-4">
-      <img src="{{url_for('.static', filename='placeholderPFP.jpg')}}" alt="placeholder_profile_pic" class="profile_pic mx-5">
-      <div class="ms-4">
-        <h3>Friends Name</h3>
-        <div class="d-flex mt-3">
-          <button class="btn btn-primary me-5">View Profile</button>
-          <button class="btn btn-primary">Unfriend</button>
+    <h2>You have {{friends|length}} friend{% if not friends|length == 1 %}s{% endif %}</h2>
+    {% for friend in friends %}
+      <!-- single user -->
+      <div class="d-flex my-4">
+        <a href="/profile/{{friend.id}}"><img src="{{url_for('.static', filename='placeholderPFP.jpg')}}" alt="placeholder_profile_pic" class="profile_pic mx-5"></a>
+        <div class="ms-4">
+          <h3>{{friend.username}}</h3>
+          <div class="d-flex mt-3">
+            <button class="btn btn-primary me-5" onclick="window.location.href='/profile/{{friend.id}}';">View Profile</button>
+            <button class="btn btn-primary" onclick="window.location.href='/unfriend/{{friend.id}}';">Unfriend</button>
+          </div>
         </div>
       </div>
-    </div>
-    <!-- single user -->
-    <div class="d-flex my-4">
-      <img src="{{url_for('.static', filename='placeholderPFP.jpg')}}" alt="placeholder_profile_pic" class="profile_pic mx-5">
-      <div class="ms-4">
-        <h3>Friends Name</h3>
-        <div class="d-flex mt-3">
-          <button class="btn btn-primary me-5">View Profile</button>
-          <button class="btn btn-primary">Unfriend</button>
-        </div>
-      </div>
-    </div>
-    <!-- single user -->
-    <div class="d-flex my-4">
-      <img src="{{url_for('.static', filename='placeholderPFP.jpg')}}" alt="placeholder_profile_pic" class="profile_pic mx-5">
-      <div class="ms-4">
-        <h3>Friends Name</h3>
-        <div class="d-flex mt-3">
-          <button class="btn btn-primary me-5">View Profile</button>
-          <button class="btn btn-primary">Unfriend</button>
-        </div>
-      </div>
-    </div>
-    <!-- celebrities -->
+    {% endfor %}
     <hr>
+    <!-- celebrities -->
     <h2>You follow # celebrities</h2>
     <!-- single celebrity -->
     <div class="d-flex my-4">

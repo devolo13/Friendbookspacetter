@@ -78,9 +78,17 @@ def profile_template(id):
     if not 'user_id' in session:
         return redirect('/')
     user = User.get_by_id(id)
+    friends = User.get_friends(session['user_id'])
     all_posts = Post.get_by_uploader(id)
-    # popular_post = Post.get_most_popular(id)
-    return render_template('profile.html', user=user, all_posts=all_posts)
+    if not all_posts == []:
+        interactions = 0
+        popular_post = all_posts[0]
+        for post in all_posts:
+            if (post.comments + post.lit_count) > interactions:
+                interactions = post.comments + post.lit_count
+                popular_post = post
+        return render_template('profile.html', user=user, all_posts=all_posts, popular_post=popular_post, friends=friends)
+    return render_template('profile.html', user=user, all_posts=None, popular_post=None, friends=friends)
 
 
 # template for a user's settings page
@@ -97,7 +105,34 @@ def user_settings():
 def friends_page():
     if not 'user_id' in session:
         return redirect('/')
-    return render_template('friends_list.html')
+    friends_ids = User.get_friends(session['user_id'])
+    friends = []
+    for friend_index in range(len(friends_ids)):
+        friends.append(User.get_by_id(friends_ids[friend_index]))
+    return render_template('friends_list.html', friends=friends)
+
+
+# route for adding a friend and return to the previous page
+@app.route('/add_friend/profile/<int:friend_id>')
+def add_friend(friend_id):
+    data = {
+        'user_id': session['user_id'],
+        'friend_id': friend_id
+    }
+    User.add_friend(data)
+    return redirect(f'/profile/{friend_id}')
+
+
+# route for unfriending/unfollowing a user and returning to the friends page
+@app.route('/unfriend/<int:friend_id>')
+@app.route('/unfollow/<int:friend_id>')
+def remove_friend(friend_id):
+    data = {
+        'user_id': session['user_id'],
+        'friend_id': friend_id
+    }
+    User.remove_friend(data)
+    return redirect('/friends')
 
 
 # route for logging out a user and redirecting to login page

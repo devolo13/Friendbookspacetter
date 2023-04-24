@@ -83,6 +83,34 @@ class User:
             return False
         return cls(results[0])
 
+    # method for getting all of a users friends. returns a list of friend ids
+    @staticmethod
+    def get_friends(user_id):
+        data = {'user_id':user_id}
+        query = 'SELECT friend_id FROM friendships WHERE user_id = %(user_id)s;'
+        results = connectToMySQL(DATABASE).query_db(query, data)
+        if results == ():
+            return []
+        friends_list = []
+        for index in range(len(results)):
+            friends_list.append(results[index]['friend_id'])
+        print(f'friends_list = {friends_list}')
+        return friends_list
+
+    # method for adding a friend to a users list
+    @staticmethod
+    def add_friend(data):
+        query = 'INSERT INTO friendships (user_id, friend_id) VALUES (%(user_id)s, %(friend_id)s);'
+        connectToMySQL(DATABASE).query_db(query, data)
+        return
+
+    # method for removing a friend
+    @staticmethod
+    def remove_friend(data):
+        query = 'DELETE FROM friendships WHERE user_id = %(user_id)s and friend_id = %(friend_id)s;'
+        connectToMySQL(DATABASE).query_db(query, data)
+        return
+
     # method for validating user registration inputs. returns True if valid, False if invalid. creates flash messages along the way
     @staticmethod
     def validate_registration_inputs(data):

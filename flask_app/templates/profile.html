@@ -40,7 +40,11 @@
       <img src="{{url_for('.static', filename='placeholderPFP.jpg')}}" alt="placeholder profile picture" class="main_profile_pic ms-5">
       <h3>{{user.username}}</h3>
       <p class="ms-4">{{user.bio}}</p>
-      <button class="btn btn-primary">Add Friend</button>
+      {% if not session['user_id'] == user.id %}
+      {% if not user.id in friends %}
+        <button class="btn btn-primary" onclick="window.location.href='/add_friend/profile/{{user.id}}';">Add Friend</button>
+      {% endif %}
+      {% endif %}
       <!-- spotify box here -->
       <div class="spotify bg-warning mt-3 text-center text-dark" style="height: 30rem; border-radius: 2rem;"><h3>Spotify Placeholder</h3></div>
     </div>
@@ -50,27 +54,40 @@
         <!-- new post box -->
         <div class="new_post">
           <p>Create a post</p>
-          <textarea name="new_post" id="new_post" class="form-control" placeholder="Start Typing"></textarea>
-          <div class="d-flex m-2 justify-content-end">
-            <button class="btn btn-primary mx-2">add image</button>
-            <button class="btn btn-primary">post</button>
+          {% for message in get_flashed_messages(category_filter='new_post') %}
+            <p class="text-danger">{{message}}</p>
+          {% endfor %}
+          <form action="/add_post/profile/{{user.id}}" method="post">
+            <input type="hidden" name="poster_id" value="{{user.id}}">
+            <textarea name="content" id="new_post" class="form-control" placeholder="Start Typing"></textarea>
+            <div class="d-flex m-2 justify-content-end">
+              <button class="btn btn-primary mx-2">add image</button>
+              <button class="btn btn-primary" type='submit'>post</button>
+          </form>
           </div>
         </div>
       {% endif %}
+      {% if all_posts == None %}
+      <h2>Posts</h2>
+      <p class="ms-4">This user has no posts</p>
+      {% else %}
       <h2>Most Popular Post:</h2>
-      <!-- image post -->
-      <div class="image_post d-flex mt-4 ms-3">
+      <!-- text post -->
+      <div class="text_only_post d-flex mt-4 ms-3">
         <div class="post ms-3">
-          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eaque consequatur quis quam quibusdam voluptas animi vitae, quaerat explicabo consequuntur.</p>
-          <img src="{{url_for('.static', filename='placeholderPost.jpg')}}" alt="placeholder_post" class="post_pic">
-          <div class="d-flex justify-content-between mt-2">
+          <p>{{popular_post.content}}</p>
+          <div class="d-flex justify-content-between">
             <div class="d-flex">
-              <p># 🔥</p>
-              <p class="ms-3"># comments</p>
+              <a href="/post/{{popular_post.id}}" class="link-secondary text-decoration-none">{{popular_post.lit_count}} 🔥</a>
+              <a href="/post/{{popular_post.id}}" class="link-secondary text-decoration-none mx-3">{{popular_post.comments}} comments</a>
             </div>
             <div class="d-flex">
-              <button class="btn btn-primary me-2">🔥</button>
-              <button class="btn btn-primary">comment</button>
+              {% if not session['user_id'] in popular_post.lit_users %}
+                <form action="/add_lit/{{popular_post.id}}/home">
+                  <button class="btn btn-primary" type="submit">🔥</button>
+                </form>
+              {% endif %}
+              <button class="btn btn-primary ms-2" onclick="window.location.href='/post/{{popular_post.id}}';">comment</button>
             </div>
           </div>
         </div>
@@ -83,50 +100,22 @@
           <p>{{post.content}}</p>
           <div class="d-flex justify-content-between">
             <div class="d-flex">
-              <p># 🔥</p>
-              <p class="mx-3"># comments</p>
+              <a href="/post/{{post.id}}" class="link-secondary text-decoration-none">{{post.lit_count}} 🔥</a>
+              <a href="/post/{{post.id}}" class="link-secondary text-decoration-none mx-3">{{post.comments}} comments</a>
             </div>
             <div class="d-flex">
-              <button class="btn btn-primary me-2">🔥</button>
-              <button class="btn btn-primary">comment</button>
+              {% if not session['user_id'] in post.lit_users %}
+                <form action="/add_lit/{{post.id}}/home">
+                  <button class="btn btn-primary" type="submit">🔥</button>
+                </form>
+              {% endif %}
+              <button class="btn btn-primary ms-2" onclick="window.location.href='/post/{{post.id}}';">comment</button>
             </div>
           </div>
         </div>
       </div>
       {% endfor %}
-      <!-- text post -->
-      <div class="text_only_post d-flex mt-5 ms-3">
-        <div class="post ms-3">
-          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eaque consequatur quis quam quibusdam voluptas animi vitae, quaerat explicabo consequuntur, illo maxime accusamus neque obcaecati nostrum, consectetur facere. Molestiae, ab itaque.</p>
-          <div class="d-flex justify-content-between">
-            <div class="d-flex">
-              <p># 🔥</p>
-              <p class="ms-3"># comments</p>
-            </div>
-            <div class="d-flex">
-              <button class="btn btn-primary me-2">🔥</button>
-              <button class="btn btn-primary">comment</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- image post -->
-      <div class="image_post d-flex mt-5 ms-3">
-        <div class="post ms-3">
-          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eaque consequatur quis quam quibusdam voluptas animi vitae, quaerat explicabo consequuntur.</p>
-          <img src="{{url_for('.static', filename='placeholderPost.jpg')}}" alt="placeholder_post" class="post_pic">
-          <div class="d-flex justify-content-between mt-2">
-            <div class="d-flex">
-              <p># 🔥</p>
-              <p class="ms-3"># comments</p>
-            </div>
-            <div class="d-flex">
-              <button class="btn btn-primary me-2">🔥</button>
-              <button class="btn btn-primary">comment</button>
-            </div>
-          </div>
-        </div>
-      </div>
+      {% endif %}
     </div>
   </div>
   <!-- bootstrap script for dropdown menu -->
