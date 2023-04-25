@@ -1,11 +1,17 @@
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="dark">
+<html lang="en"{% if user.theme == 'dark' %} data-bs-theme="dark"{% endif %}>
 
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet"  type="text/css" href="{{url_for('.static', filename='default.bootstrap.min.css')}}">
+  {% if user.theme == 'light' %}
+    <link rel="stylesheet"  type="text/css" href="{{url_for('.static', filename='default.bootstrap.min.css')}}">
+  {% elif user.theme == 'dark' %}
+    <link rel="stylesheet"  type="text/css" href="{{url_for('.static', filename='default.bootstrap.min.css')}}">
+  {% else %}
+    <link rel="stylesheet"  type="text/css" id="bootstrap_stylesheet" href="{{user.theme}}">
+  {% endif %}
   <link rel="stylesheet"  type="text/css" href="{{url_for('.static', filename='style.css')}}">
   <title>Username's Profile</title>
 </head>
@@ -122,6 +128,10 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-qKXV1j0HvMUeCBQ+QVp7JcfGl760yU08IQ+GpUo5hlbpg51QRiuqHAJz8+BrxE/N"
     crossorigin="anonymous"></script>
+  <input type="hidden" name="current_theme" id="current_theme" value="{{session['theme']}}">
+  {% block javascript %}
+    <script src="{{ url_for('static',filename='themes.js') }}"></script>
+  {% endblock %}
 </body>
 
 </html>

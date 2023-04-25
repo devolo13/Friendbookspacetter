@@ -31,7 +31,8 @@ class User:
     def update(cls, data):
         query = 'UPDATE users SET username = %(username)s, bio = %(bio)s, theme = %(theme)s WHERE id = %(id)s;'
         connectToMySQL(DATABASE).query_db(query, data)
-        return
+        user = User.get_by_id(data['id'])
+        return user
 
     # method for getting all users. returns a list of user objects
     # potentially unnecessary
@@ -73,6 +74,7 @@ class User:
         return cls(results[0])
 
     # should create a method for checking if a username is in use to prevent duplicates
+    # BROKEN?
     @classmethod
     def check_username(cls, username):
         # check if username exists in database. if it exists, return that user's object, otherwise return false
@@ -110,6 +112,21 @@ class User:
         query = 'DELETE FROM friendships WHERE user_id = %(user_id)s and friend_id = %(friend_id)s;'
         connectToMySQL(DATABASE).query_db(query, data)
         return
+
+    # method for deleting a user and everything they've ever done
+    @staticmethod
+    def delete_user(id):
+        data = {'user_id': id}
+        query = 'DELETE FROM comments WHERE commenter_id = %(user_id)s;'
+        connectToMySQL(DATABASE).query_db(query, data)
+        query = 'DELETE FROM fires WHERE user_id = %(user_id)s;'
+        connectToMySQL(DATABASE).query_db(query, data)
+        query = 'DELETE FROM friendships WHERE user_id = %(user_id)s or friend_id = %(user_id);'
+        connectToMySQL(DATABASE).query_db(query, data)
+        query = 'DELETE FROM posts WHERE poster_id = %(user_id)s;'
+        connectToMySQL(DATABASE).query_db(query, data)
+        query = 'DELETE FROM users WHERE id = %(user_id)s;'
+        connectToMySQL(DATABASE).query_db(query, data)
 
     # method for validating user registration inputs. returns True if valid, False if invalid. creates flash messages along the way
     @staticmethod

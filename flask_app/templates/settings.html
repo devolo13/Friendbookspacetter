@@ -1,11 +1,17 @@
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="dark">
+<html lang="en"{% if session['theme'] == 'dark' %} data-bs-theme="dark"{% endif %}>
 
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet"  type="text/css" href="{{url_for('.static', filename='default.bootstrap.min.css')}}">
+  {% if session['theme'] == 'light' %}
+    <link rel="stylesheet"  type="text/css" href="{{url_for('.static', filename='default.bootstrap.min.css')}}">
+  {% elif session['theme'] == 'dark' %}
+    <link rel="stylesheet"  type="text/css" href="{{url_for('.static', filename='default.bootstrap.min.css')}}">
+  {% else %}
+    <link rel="stylesheet"  type="text/css" id="bootstrap_stylesheet" href="{{session['theme']}}">
+  {% endif %}
   <link rel="stylesheet"  type="text/css" href="{{url_for('.static', filename='style.css')}}">
   <title>Username's Profile</title>
 </head>
@@ -52,7 +58,9 @@
     <!-- right column -->
     <div class="col-8 ms-5">
       <form action="/update_user_settings" method="post">
-        <input type="hidden" name="user_id" value="{{user.id}}">
+        <input type="hidden" name="user_id" id="user_id" value="{{user.id}}">
+        <input type="hidden" name="celebrity_status" id="celebrity_status" value="{{user.celebrity}}">
+        <input type="hidden" name="current_theme" id="current_theme" value="{{user.theme}}">
         <label for="username" class="mt-4 mb-2">Username:</label>
         <input type="text" name="username" id="username" class="form-control" value="{{user.username}}">
         <label for="bio" class="mt-4 mb-2">Profile Bio:</label>
@@ -61,31 +69,31 @@
         <select name="theme" id="theme" class="form-select">
           <option value="dark">Dark</option>
           <option value="light">Light</option>
-          <option value="cerulean">Cerulean</option>
-          <option value="cosmo">Cosmo</option>
-          <option value="cyborg">Cyborg</option>
-          <option value="darkly">Darkly</option>
-          <option value="flatly">Flatly</option>
-          <option value="journal">Journal</option>
-          <option value="litera">Litera</option>
-          <option value="lumen">Lumen</option>
-          <option value="lux">LUX</option>
-          <option value="materia">Materia</option>
-          <option value="minty">Minty</option>
-          <option value="morph">Morph</option>
-          <option value="pulse">Pulse</option>
-          <option value="quartz">Quartz</option>
-          <option value="sandstone">Sandstone</option>
-          <option value="simplex">Simplex</option>
-          <option value="sketchy">Sketchy</option>
-          <option value="slate">Slate</option>
-          <option value="solar">Solar</option>
-          <option value="spacelab">Spacelab</option>
-          <option value="superhero">Superhero</option>
-          <option value="united">United</option>
-          <option value="vapor">Vapor</option>
-          <option value="yeti">Yeti</option>
-          <option value="zephyr">Zephyr</option>
+          <option value="{{url_for('.static', filename='cerulean.bootstrap.min.css')}}">Cerulean</option>
+          <option value="{{url_for('.static', filename='cosmo.bootstrap.min.css')}}">Cosmo</option>
+          <option value="{{url_for('.static', filename='cyborg.bootstrap.min.css')}}">Cyborg</option>
+          <option value="{{url_for('.static', filename='darkly.bootstrap.min.css')}}">Darkly</option>
+          <option value="{{url_for('.static', filename='flatly.bootstrap.min.css')}}">Flatly</option>
+          <option value="{{url_for('.static', filename='journal.bootstrap.min.css')}}">Journal</option>
+          <option value="{{url_for('.static', filename='litera.bootstrap.min.css')}}">Litera</option>
+          <option value="{{url_for('.static', filename='lumen.bootstrap.min.css')}}">Lumen</option>
+          <option value="{{url_for('.static', filename='lux.bootstrap.min.css')}}">LUX</option>
+          <option value="{{url_for('.static', filename='materia.bootstrap.min.css')}}">Materia</option>
+          <option value="{{url_for('.static', filename='minty.bootstrap.min.css')}}">Minty</option>
+          <option value="{{url_for('.static', filename='morph.bootstrap.min.css')}}">Morph</option>
+          <option value="{{url_for('.static', filename='pulse.bootstrap.min.css')}}">Pulse</option>
+          <option value="{{url_for('.static', filename='quartz.bootstrap.min.css')}}">Quartz</option>
+          <option value="{{url_for('.static', filename='sandstone.bootstrap.min.css')}}">Sandstone</option>
+          <option value="{{url_for('.static', filename='simplex.bootstrap.min.css')}}">Simplex</option>
+          <option value="{{url_for('.static', filename='sketchy.bootstrap.min.css')}}">Sketchy</option>
+          <option value="{{url_for('.static', filename='slate.bootstrap.min.css')}}">Slate</option>
+          <option value="{{url_for('.static', filename='solar.bootstrap.min.css')}}">Solar</option>
+          <option value="{{url_for('.static', filename='spacelab.bootstrap.min.css')}}">Spacelab</option>
+          <option value="{{url_for('.static', filename='superhero.bootstrap.min.css')}}">Superhero</option>
+          <option value="{{url_for('.static', filename='united.bootstrap.min.css')}}">United</option>
+          <option value="{{url_for('.static', filename='vapor.bootstrap.min.css')}}">Vapor</option>
+          <option value="{{url_for('.static', filename='yeti.bootstrap.min.css')}}">Yeti</option>
+          <option value="{{url_for('.static', filename='zephyr.bootstrap.min.css')}}">Zephyr</option>
         </select>
         <p class="mt-4 mb-2">Celebrity Mode:</p>
         <input type="radio" name="celebrity" id="celebrity_true" value="true">
@@ -97,7 +105,7 @@
         </div>
       </form>
       <div class="d-flex justify-content-end">
-        <button class="btn btn-danger">Delete Account</button>
+        <button class="btn btn-danger" onclick="accountDeletionConfirmation()">Delete Account</button>
       </div>
     </div>
   </div>
@@ -105,6 +113,9 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha2/dist/js/bootstrap.bundle.min.js"
     integrity="sha384-qKXV1j0HvMUeCBQ+QVp7JcfGl760yU08IQ+GpUo5hlbpg51QRiuqHAJz8+BrxE/N"
     crossorigin="anonymous"></script>
+    {% block javascript %}
+    <script src="{{ url_for('static',filename='settings.js') }}"></script>
+    {% endblock %}
 </body>
 
 </html>

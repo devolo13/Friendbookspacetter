@@ -1,11 +1,17 @@
 <!DOCTYPE html>
-<html lang="en" data-bs-theme="dark">
+<html lang="en"{% if session['theme'] == 'dark' %} data-bs-theme="dark"{% endif %}>
 
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet"  type="text/css" href="{{url_for('.static', filename='default.bootstrap.min.css')}}">
+  {% if session['theme'] == 'light' %}
+    <link rel="stylesheet"  type="text/css" href="{{url_for('.static', filename='default.bootstrap.min.css')}}">
+  {% elif session['theme'] == 'dark' %}
+    <link rel="stylesheet"  type="text/css" href="{{url_for('.static', filename='default.bootstrap.min.css')}}">
+  {% else %}
+    <link rel="stylesheet"  type="text/css" id="bootstrap_stylesheet" href="{{session['theme']}}">
+  {% endif %}
   <link rel="stylesheet"  type="text/css" href="{{url_for('.static', filename='style.css')}}">
   <title>Comments</title>
 </head>

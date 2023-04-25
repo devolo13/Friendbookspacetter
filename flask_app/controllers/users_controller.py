@@ -29,6 +29,7 @@ def register_new_user():
         data['password'] = bcrypt.generate_password_hash(data['password'])
         user = User.save(data)
         session['user_id'] = user.id
+        session['theme'] = user.theme
         return redirect('/home')
     else:
         # if user input was not valid, show errors and redirect back to registration/login page
@@ -50,6 +51,7 @@ def login_user():
         if bcrypt.check_password_hash(user.password, data['password']):
             # password is correct. store the user's id in session and redirect them to the recipes page
             session['user_id'] = user.id
+            session['theme'] = user.theme
             return redirect('/home')
         else:
             # password is incorrect. show them an error and ask them to log in again
@@ -68,7 +70,8 @@ def update_user():
         'id': session['user_id']
     }
     if User.validate_update_inputs(data):
-        User.update(data)
+        user = User.update(data)
+        session['theme'] = user.theme
     return redirect(f'/profile/{session["user_id"]}')
 
 
@@ -133,6 +136,14 @@ def remove_friend(friend_id):
     }
     User.remove_friend(data)
     return redirect('/friends')
+
+
+# route for deleting a user and redirecting to register page
+@app.route('/delete_user')
+def delete_user():
+    user_id = session['user_id']
+    User.delete_user(user_id)
+    return redirect('/')
 
 
 # route for logging out a user and redirecting to login page
