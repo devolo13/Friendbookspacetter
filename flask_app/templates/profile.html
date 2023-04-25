@@ -43,7 +43,7 @@
   <div class="container d-flex my-5">
     <!-- left column -->
     <div class="col-4 me-5">
-      <img src="{{url_for('.static', filename='placeholderPFP.jpg')}}" alt="placeholder profile picture" class="main_profile_pic ms-5">
+      <img src="{{url_for('.static', filename='placeholderPFP.jpg')}}" alt="placeholder profile picture" class="main_profile_pic ms-5 mb-2">
       <h3>{{user.username}}</h3>
       <p class="ms-4">{{user.bio}}</p>
       {% if not session['user_id'] == user.id %}
