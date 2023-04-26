@@ -54,6 +54,17 @@ class User:
         results = connectToMySQL(DATABASE).query_db(query, data)
         return cls(results[0])
 
+    # method for searching for text strings in usernames. returns list of user objects
+    @classmethod
+    def search_users(cls, string):
+        data = {'string': f'%{string}%'}
+        query = "SELECT * FROM users WHERE username like %(string)s;"
+        results = connectToMySQL(DATABASE).query_db(query, data)
+        users = []
+        for user in results:
+            users.append(cls(user))
+        return users
+
     # method for getting all user logins. returns a list of dictionaries. [{email: xxx, password: xxx, id: xxx}]
     @classmethod
     def get_all_logins(cls):

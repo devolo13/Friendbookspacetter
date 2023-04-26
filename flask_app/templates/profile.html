@@ -26,10 +26,10 @@
       <p class="mx-2">|</p>
       <a href="/home" class="nav-link">Home</a>
     </div>
-    <div class="searchbar d-flex">
-      <input type="text" name="searchbar" id="searchbar" placeholder="Search..." class="form-control me-2">
+    <form action="/search" class="d-flex" method="post">
+      <input type="text" name="search" id="searchbar" placeholder="Search..." class="form-control me-2">
       <button class="btn btn-primary">Search</button>
-    </div>
+    </form>
     <div class="nav-item dropdown me-5">
       <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Account</a>
       <ul class="dropdown-menu">
@@ -49,7 +49,7 @@
       <p class="ms-4">{{user.bio}}</p>
       {% if not session['user_id'] == user.id %}
       {% if not user.id in friends %}
-        <button class="btn btn-primary" onclick="window.location.href='/add_friend/profile/{{user.id}}';">Add Friend</button>
+        <button class="btn btn-primary mb-2" onclick="window.location.href='/add_friend/profile/{{user.id}}';">Add Friend</button>
       {% endif %}
       {% endif %}
       <!-- embeded youtube video here -->

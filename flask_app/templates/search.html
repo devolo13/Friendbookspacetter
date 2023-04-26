@@ -28,10 +28,10 @@
       <p class="mx-2">|</p>
       <a href="/home" class="nav-link">Home</a>
     </div>
-    <div class="searchbar d-flex">
-      <input type="text" name="searchbar" id="searchbar" placeholder="Search..." class="form-control me-2">
+    <form action="/search" class="d-flex" method="post">
+      <input type="text" name="search" id="searchbar" placeholder="Search..." class="form-control me-2">
       <button class="btn btn-primary">Search</button>
-    </div>
+    </form>
     <div class="nav-item dropdown me-5">
       <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Account</a>
       <ul class="dropdown-menu">
@@ -48,107 +48,51 @@
     <div class="col-8 me-5">
       <div class="refine_search">
         <h4>Search Results:</h4>
-        <textarea name="new_post" id="new_post" class="form-control" placeholder="Refine Search..."></textarea>
-        <div class="d-flex m-2 justify-content-end">
-          <button class="btn btn-primary">Search</button>
-        </div>
+        <form action="/search" method="post">
+          <textarea name="search" id="new_post" class="form-control" placeholder="Refine Search..." onkeydown="if (event.keyCode == 13) { this.form.submit(); return false; }">{{query}}</textarea>
+          <div class="d-flex m-2 justify-content-end">
+            <button class="btn btn-primary" type="submit">Search</button>
+          </div>
+        </form>
       </div>
       <!-- single user -->
+      {% for user in users_list %}
       <div class="d-flex mt-5">
-        <img src="{{url_for('.static', filename='placeholderPFP.jpg')}}" alt="placeholder_profile_pic" class="profile_pic">
+        <a href="/profile/{{user.id}}"><img src="{{url_for('.static', filename='placeholderPFP.jpg')}}" alt="placeholder profile pic" class="profile_pic"></a>
         <div class="ms-4">
-          <h3>Users' Name</h3>
+          <h3>{{user.username}}</h3>
           <div class="d-flex mt-3">
             <button class="btn btn-primary me-5">View Profile</button>
             <button class="btn btn-primary">Unfriend</button>
           </div>
         </div>
       </div>
-      <!-- single user -->
-      <div class="d-flex mt-5">
-        <img src="{{url_for('.static', filename='placeholderPFP.jpg')}}" alt="placeholder_profile_pic" class="profile_pic">
-        <div class="ms-4">
-          <h3>Users' Name</h3>
-          <div class="d-flex mt-3">
-            <button class="btn btn-primary me-5">View Profile</button>
-            <button class="btn btn-primary">Unfriend</button>
-          </div>
-        </div>
-      </div>
-      <!-- text post -->
-      <div class="text_only_post d-flex mt-5">
-        <img src="{{url_for('.static', filename='placeholderPFP.jpg')}}" alt="placeholder_profile_pic" class="profile_pic">
-        <div class="post ms-3">
-          <p>Username</p>
-          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eaque consequatur quis quam quibusdam voluptas animi vitae, quaerat explicabo consequuntur, illo maxime accusamus neque obcaecati nostrum, consectetur facere. Molestiae, ab itaque.</p>
-          <div class="d-flex justify-content-between">
-            <div class="d-flex">
-              <p># 🔥</p>
-              <p class="ms-3"># comments</p>
-            </div>
-            <div class="d-flex">
-              <button class="btn btn-primary me-2">🔥</button>
-              <button class="btn btn-primary">comment</button>
+      {% endfor %}
+      {% if not users_list == [] %}{% if not posts == [] %}<hr class="mt-5">{% endif %}{% endif %}
+        {% for post in posts %}
+        <!-- text post -->
+        <div class="text_only_post d-flex mt-5">
+          <a href="/profile/{{post.poster_id}}"><img src="{{url_for('.static', filename='placeholderPFP.jpg')}}" alt="placeholder profile pic" class="profile_pic"></a>
+          <div class="post ms-3">
+            <p>{{post.poster_username}}</p>
+            <p>{{post.content}}</p>
+            <div class="post_interactions d-flex justify-content-between">
+              <div class="d-flex">
+                <a href="/post/{{post.id}}" class="link-secondary text-decoration-none">{{post.lit_count}} 🔥</a>
+                <a href="/post/{{post.id}}" class="ms-3 text-decoration-none link-secondary">{{post.comments}} comment{% if not post.comments == 1 %}s{% endif %}</a>
+              </div>
+              <div class="d-flex">
+                {% if not session['user_id'] in post.lit_users %}
+                  <form action="/add_lit/{{post.id}}/home">
+                    <button class="btn btn-primary" type="submit">🔥</button>
+                  </form>
+                {% endif %}
+                <button class="btn btn-primary mx-2" onclick="window.location.href='/post/{{post.id}}';">comment</button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      <!-- image post -->
-      <div class="image_post d-flex mt-5">
-        <img src="{{url_for('.static', filename='placeholderPFP.jpg')}}" alt="placeholder_profile_pic" class="profile_pic">
-        <div class="post ms-3">
-          <p>Username</p>
-          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eaque consequatur quis quam quibusdam voluptas animi vitae, quaerat explicabo consequuntur.</p>
-          <img src="{{url_for('.static', filename='placeholderPost.jpg')}}" alt="placeholder_post" class="post_pic">
-          <div class="d-flex justify-content-between mt-2">
-            <div class="d-flex">
-              <p># 🔥</p>
-              <p class="ms-3"># comments</p>
-            </div>
-            <div class="d-flex">
-              <button class="btn btn-primary me-2">🔥</button>
-              <button class="btn btn-primary">comment</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <!-- text post -->
-      <div class="text_only_post d-flex mt-5">
-        <img src="{{url_for('.static', filename='placeholderPFP.jpg')}}" alt="placeholder_profile_pic" class="profile_pic">
-        <div class="post ms-3">
-          <p>Username</p>
-          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eaque consequatur quis quam quibusdam voluptas animi vitae, quaerat explicabo consequuntur, illo maxime accusamus neque obcaecati nostrum, consectetur facere. Molestiae, ab itaque.</p>
-          <div class="d-flex justify-content-between">
-            <div class="d-flex">
-              <p># 🔥</p>
-              <p class="ms-3"># comments</p>
-            </div>
-            <div class="d-flex">
-              <button class="btn btn-primary me-2">🔥</button>
-              <button class="btn btn-primary">comment</button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-    <!-- right column -->
-    <div class="col-4 ms-5">
-      <form action="CHANGE_LATER" method="post">
-        <!-- filter -->
-        <h4>Show Posts By:</h4>
-        <input type="radio" name="filter" id="none" value="none" class="me-1">
-        <label for="none">None</label><br>
-        <input type="radio" name="filter" id="friends_profiles" value="friends_profiles" class="me-1">
-        <label for="friends">Friends' Profiles</label><br>
-        <input type="radio" name="filter" id="all_profiles" value="all_profiles" class="me-1">
-        <label for="all_profiles">All Profiles</label><br>
-        <input type="radio" name="filter" id="friends_posts" value="friends_posts" class="me-1">
-        <label for="friends_posts">Friends' Posts</label><br>
-        <input type="radio" name="filter" id="all_posts" value="all_posts" class="me-1">
-        <label for="all_posts">All Posts</label><br>
-        <!-- button -->
-        <button class="btn btn-primary mt-3">Filter Search</button>
-      </form>
+      {% endfor %}
     </div>
   </div>
   <!-- bootstrap script for dropdown menu -->

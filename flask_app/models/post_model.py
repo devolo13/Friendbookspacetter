@@ -87,6 +87,17 @@ class Post:
             posts.append(cls(post))
         return posts
 
+    # method for searching for text strings in post content. returns list of post objects
+    @classmethod
+    def search_posts(cls, string):
+        data = {'string': f'%{string}%'}
+        query = "SELECT posts.id, poster_id, content, users.username as poster_username, posts.created_at, posts.updated_at from posts LEFT JOIN users on users.id = posts.poster_id WHERE content like %(string)s;"
+        results = connectToMySQL(DATABASE).query_db(query, data)
+        posts = []
+        for post in results:
+            posts.append(cls(post))
+        return posts
+
     # method for determining how many lit a post has. returns number of lits
     @staticmethod
     def get_lit_count(post_id):

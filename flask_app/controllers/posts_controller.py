@@ -89,11 +89,33 @@ def home_page():
 
 
 # search page showing results
-@app.route('/search')
-def search_page():
+@app.route('/search/<string>')
+def search_page(string, posts=[]):
     if not 'user_id' in session:
         return redirect('/')
+    posts = Post.search_posts(string)
+    users = User.search_users(string)
+    return render_template('search.html', posts=posts, users_list=users, query=string)
+
+
+# search template with no results
+@app.route('/search', methods=["POST", 'GET'])
+def search_template():
+    if not 'user_id' in session:
+        return redirect('/')
+    if 'search' in request.form:
+        if not request.form['search'] == '':
+            string = request.form['search']
+            return redirect(f'/search/{string}')
     return render_template('search.html')
+
+
+# TEST ROUTE
+@app.route('/searching', methods=['POST'])
+def test():
+    string = request.form['search']
+    posts = Post.search_posts(string)
+    return redirect('/search', posts=posts)
 
 
 # route for creating a new post and redirecting back to the page the user was on

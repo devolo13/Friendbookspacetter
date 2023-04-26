@@ -71,7 +71,8 @@ def update_user():
     }
     if User.validate_update_inputs(data):
         if not data['video'][:29] == 'https://www.youtube.com/embed':
-            data['video'] = 'https://www.youtube.com/embed' + data['video'][16:]
+            if not data['video'] == 'none':
+                data['video'] = 'https://www.youtube.com/embed' + data['video'][16:]
         user = User.update(data)
         session['theme'] = user.theme
     return redirect('/settings')
@@ -112,9 +113,14 @@ def friends_page():
         return redirect('/')
     friends_ids = User.get_friends(session['user_id'])
     friends = []
+    celebrities = []
     for friend_index in range(len(friends_ids)):
-        friends.append(User.get_by_id(friends_ids[friend_index]))
-    return render_template('friends_list.html', friends=friends)
+        person = User.get_by_id(friends_ids[friend_index])
+        if person.celebrity == 'yes':
+            celebrities.append(person)
+        else:
+            friends.append(person)
+    return render_template('friends_list.html', friends=friends, celebrities=celebrities)
 
 
 # route for adding a friend and return to the previous page
