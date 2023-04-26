@@ -70,9 +70,11 @@ def update_user():
         'id': session['user_id']
     }
     if User.validate_update_inputs(data):
+        if not data['video'][:29] == 'https://www.youtube.com/embed':
+            data['video'] = 'https://www.youtube.com/embed' + data['video'][16:]
         user = User.update(data)
         session['theme'] = user.theme
-    return redirect(f'/profile/{session["user_id"]}')
+    return redirect('/settings')
 
 
 # template for user's profile page

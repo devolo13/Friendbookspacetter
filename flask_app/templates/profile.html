@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- custom user theme -->
   {% if user.theme == 'light' %}
     <link rel="stylesheet"  type="text/css" href="{{url_for('.static', filename='default.bootstrap.min.css')}}">
   {% elif user.theme == 'dark' %}
@@ -51,8 +52,10 @@
         <button class="btn btn-primary" onclick="window.location.href='/add_friend/profile/{{user.id}}';">Add Friend</button>
       {% endif %}
       {% endif %}
-      <!-- spotify box here -->
-      <div class="spotify bg-warning mt-3 text-center text-dark" style="height: 30rem; border-radius: 2rem;"><h3>Spotify Placeholder</h3></div>
+      <!-- embeded youtube video here -->
+      {% if not user.video == 'none' %}
+      <iframe width="100%" height="40%" src="{{user.video}}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+      {% endif %}
     </div>
     <!-- right column -->
     <div class="col-8 ms-5">
@@ -69,8 +72,8 @@
             <div class="d-flex m-2 justify-content-end">
               <button class="btn btn-primary mx-2">add image</button>
               <button class="btn btn-primary" type='submit'>post</button>
+            </div>
           </form>
-          </div>
         </div>
       {% endif %}
       {% if all_posts == None %}

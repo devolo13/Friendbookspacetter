@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- custom user theme -->
   {% if session['theme'] == 'light' %}
     <link rel="stylesheet"  type="text/css" href="{{url_for('.static', filename='default.bootstrap.min.css')}}">
   {% elif session['theme'] == 'dark' %}
@@ -52,8 +53,6 @@
       <div class="d-flex justify-content-center">
         <button class="btn btn-primary mt-3">Change Profile Picture</button>
       </div>
-      <!-- spotify box here -->
-      <div class="spotify bg-warning mt-3 text-center text-dark" style="height: 30rem; border-radius: 2rem;"><h3>Spotify Settings?</h3></div>
     </div>
     <!-- right column -->
     <div class="col-8 ms-5">
@@ -65,6 +64,8 @@
         <input type="text" name="username" id="username" class="form-control" value="{{user.username}}">
         <label for="bio" class="mt-4 mb-2">Profile Bio:</label>
         <textarea name="bio" id="bio" cols="30" rows="6" class="form-control">{{user.bio}}</textarea>
+        <label for="video" class="mt-4 mb-2">Profile Video:</label>
+        <input type="text" name="video" id="video" class="form-control" value="{{user.video}}">
         <label for="theme" class="mt-4 mb-2">Theme:</label>
         <select name="theme" id="theme" class="form-select">
           <option value="dark">Dark</option>
@@ -96,9 +97,9 @@
           <option value="{{url_for('.static', filename='zephyr.bootstrap.min.css')}}">Zephyr</option>
         </select>
         <p class="mt-4 mb-2">Celebrity Mode:</p>
-        <input type="radio" name="celebrity" id="celebrity_true" value="true">
+        <input type="radio" name="celebrity" id="celebrity_true" value="yes">
         <label for="celebrity_true" class="me-5">Enabled</label>
-        <input type="radio" name="celebrity" id="celebrity_false" value="false">
+        <input type="radio" name="celebrity" id="celebrity_false" value="no">
         <label for="celebrity_false">Disabled</label><br>
         <div class="d-flex justify-content-end">
           <button class="btn btn-primary my-4">Update</button>

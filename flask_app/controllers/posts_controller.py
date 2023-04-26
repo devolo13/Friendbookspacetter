@@ -2,18 +2,97 @@ from flask_app import app
 from flask import render_template, redirect, request, session, flash
 from flask_app.models.post_model import Post
 from flask_app.models.user_model import User
+from datetime import date
 
 
 # home page showing all posts
-@app.route('/home')
+@app.route('/home', methods=["POST", "GET"])
 def home_page():
-    all_posts = Post.get_all()
-    return render_template('home.html', all_posts=all_posts)
+    sort = {**request.form}
+    if not 'user_id' in session:
+        session['theme'] = 'dark'
+        sort = {
+            'sort': 'chronological',
+            'show_time': 'week',
+            'show_celebrities': 'true'
+        }
+    if not 'sort' in sort:
+        sort['sort'] = 'chronological'
+    if not 'show_time' in sort:
+        sort['show_time'] = 'all'
+    if not 'show_friends' in sort and not 'show_friends_of_friends' in sort and not 'show_celebrities' in sort and not 'show_everyone' in sort:
+        sort['show_everyone'] = 'true'
+    query = 'SELECT posts.id, posts.poster_id, posts.content, users.username as poster_username, posts.created_at, posts.updated_at from posts LEFT JOIN users on users.id = posts.poster_id'
+    posts = []
+    # TIME FILTER
+    today = date.today()
+    if sort['show_time'] == 'today':
+        if today.day == 1:
+            if today.month == 1:
+                yesterday = today.replace(day=31, month=12, year=today.year-1)
+            elif (today.month == 3 or today.month == 5 or today.month == 7 or today.month == 8 or today.month == 10 or today.month == 12):
+                yesterday = today.replace(month=today.month-1, day=31)
+            elif (today.month == 2):
+                yesterday = today.replace(month=today.month-1, day=28)
+            else:
+                yesterday = today.replace(month=today.month-1, day=30)
+        else:
+            yesterday = today.replace(day=today.day-1)
+        time_filter = f' and posts.created_at > "{yesterday}"'
+    elif sort['show_time'] == 'week':
+        if today.day < 8:
+            if today.month == 1:
+                last_week = today.replace(day=31-7+today.day, month=12, year=today.year-1)
+            elif (today.month == 3 or today.month == 5 or today.month == 7 or today.month == 8 or today.month == 10 or today.month == 12):
+                last_week = today.replace(month=today.month-1, day=31-7+today.day)
+            elif (today.month == 2):
+                last_week = today.replace(month=today.month-1, day=28-7+today.day)
+            else:
+                last_week = today.replace(month=today.month-1, day=30-7+today.day)
+        else:
+            last_week = today.replace(day=today.day-7)
+        time_filter = f' and posts.created_at > "{last_week}"'
+    elif sort['show_time'] == 'month':
+        if today.month == 1:
+            last_month = today.replace(year=today.year-1, month=12)
+        else:
+            last_month = today.replace(month=today.month-1)
+        time_filter = f' and posts.created_at > "{last_month}"'
+    elif sort['show_time'] == 'all':
+        time_filter = ' and 2=2'
+    # USERS FILTER
+    if 'show_everyone' in sort:
+        users_filter = ' WHERE 1=1'
+        posts = posts + Post.get_with_filters(query=query+users_filter+time_filter+';')
+    else:
+        if 'show_friends' in sort:
+            users_filter = f' LEFT JOIN friendships on poster_id = friendships.friend_id WHERE friendships.user_id = {session["user_id"]} and users.celebrity = "no"'
+            posts = posts + Post.get_with_filters(query=query+users_filter+time_filter+';')
+        if 'show_friends_of_friends' in sort:
+            users_filter = f' LEFT JOIN friendships as friends_of_friends on poster_id = friends_of_friends.friend_id LEFT JOIN friendships as friends on friends_of_friends.user_id = friends.friend_id WHERE friends.user_id = {session["user_id"]} and users.celebrity = "no"'
+            posts = posts + Post.get_with_filters(query=query+users_filter+time_filter+';')
+        if 'show_celebrities' in sort:
+            users_filter = ' WHERE users.celebrity = "yes"'
+            posts = posts + Post.get_with_filters(query=query+users_filter+time_filter+';')
+    # remove duplicates
+    posts = [*set(posts)]
+    # SORT ORDER
+    if sort['sort'] == 'chronological':
+        posts.sort(key=lambda x: x.created_at, reverse=True)
+    elif sort['sort'] == 'lit':
+        posts.sort(key=lambda x: x.lit_count, reverse=True)
+    elif sort['sort'] == 'comments':
+        posts.sort(key=lambda x: x.comments, reverse=True)
+    elif sort['sort'] == 'ratio':
+        posts.sort(key=lambda x: x.ratio, reverse=True)
+    return render_template('home.html', sort=sort, all_posts=posts)
 
 
 # search page showing results
 @app.route('/search')
 def search_page():
+    if not 'user_id' in session:
+        return redirect('/')
     return render_template('search.html')
 
 
@@ -29,6 +108,30 @@ def add_post(route, user_id = None):
     if user_id == None:
         return redirect(f'/{route}')
     return redirect(f'/{route}/{user_id}')
+
+
+# route for editing a post and redirecting to that post's page
+@app.route('/edit_post/<int:post_id>', methods=['POST'])
+def edit_post(post_id):
+    post = Post.get_by_id(post_id)
+    if session['user_id'] == post.poster_id:
+        data = {
+            **request.form,
+            'id': post_id
+                }
+        Post.update(data)
+    return redirect(f'/post/{post_id}')
+
+
+# route to delete a post
+@app.route('/delete_post/<int:post_id>')
+def delete_post(post_id):
+    print(f'deleting post route')
+    post = Post.get_by_id(post_id)
+    if session['user_id'] == post.poster_id:
+        Post.delete(post_id)
+        return redirect('/home')
+    return redirect(f'/post/{post_id}')
 
 
 # route for adding a lit and redirecting back to the page the user was on
@@ -53,27 +156,10 @@ def add_comment():
 
 
 # page showing a single post
-@app.route('/post/<int:post_id>')
+@app.route('/post/<int:post_id>', methods=['POST', 'GET'])
 def single_post_page(post_id):
     if not 'user_id' in session:
         return redirect('/')
     post = Post.get_by_id(post_id)
     comments = Post.get_all_comments(post_id)
     return render_template('post.html', post=post, comments=comments)
-
-
-# route for deleting a magazine and redirecting to user's account page
-@app.route('/delete/<int:mag_id>')
-def delete_magazine(mag_id):
-    if not 'user_id' in session:
-        return redirect('/')
-    Magazine.delete(mag_id)
-    return redirect('/account')
-
-
-# route for subscribing a user to a magazine
-@app.route('/subscribe/<int:mag_id>')
-def subscribe(mag_id):
-    user_id = int(session['user_id'])
-    Magazine.add_subscriber(user_id, mag_id)
-    return redirect('/dashboard')

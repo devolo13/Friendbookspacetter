@@ -16,6 +16,7 @@ class User:
         self.bio = data['bio']
         self.theme = data['theme']
         self.celebrity = data['celebrity']
+        self.video = data['video']
 
     # method for adding a new user. returns that user's object
     @classmethod
@@ -29,7 +30,7 @@ class User:
     # method for updating an existing user. returns nothing
     @classmethod
     def update(cls, data):
-        query = 'UPDATE users SET username = %(username)s, bio = %(bio)s, theme = %(theme)s WHERE id = %(id)s;'
+        query = 'UPDATE users SET username = %(username)s, bio = %(bio)s, theme = %(theme)s, celebrity = %(celebrity)s, video = %(video)s WHERE id = %(id)s;'
         connectToMySQL(DATABASE).query_db(query, data)
         user = User.get_by_id(data['id'])
         return user

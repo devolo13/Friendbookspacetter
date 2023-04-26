@@ -9,9 +9,12 @@ class Post:
         self.poster_id = data['poster_id']
         self.content = data['content']
         self.poster_username = data['poster_username']
+        self.created_at = data['created_at']
+        self.updated_at = data['updated_at']
         self.lit_users = Post.get_lit_users(data['id'])
         self.lit_count = Post.get_lit_count(data['id'])
         self.comments = Post.get_comment_count(data['id'])
+        self.ratio = Post.get_ratio(self.comments, self.lit_count)
 
     # method for adding a new post. returns that magazine's id
     # should validate content length before posting
@@ -25,10 +28,31 @@ class Post:
         post_id = connectToMySQL(DATABASE).query_db(query)[0]['MAX(id)']
         return post_id
 
+    # method for updating a post
+    @staticmethod
+    def update(data):
+        # NEED TO VALIDATE INPUTS
+        query = 'UPDATE posts SET content = %(content)s WHERE id = %(id)s;'
+        connectToMySQL(DATABASE).query_db(query, data)
+        return
+
+    # method for deleting a post
+    @staticmethod
+    def delete(post_id):
+        print(f'deleting post # {post_id}')
+        data = {'post_id': post_id}
+        query = 'DELETE FROM fires WHERE post_id = %(post_id)s;'
+        connectToMySQL(DATABASE).query_db(query, data)
+        query = 'DELETE FROM comments WHERE post_id = %(post_id)s;'
+        connectToMySQL(DATABASE).query_db(query, data)
+        query = 'DELETE FROM posts WHERE id = %(post_id)s;'
+        connectToMySQL(DATABASE).query_db(query, data)
+        return
+
     # method for getting all posts. returns a list of post objects
     @classmethod
     def get_all(cls):
-        query = 'SELECT posts.id, poster_id, content, users.username as poster_username from posts LEFT JOIN users on users.id = posts.poster_id ORDER BY posts.created_at desc;'
+        query = 'SELECT posts.id, poster_id, content, users.username as poster_username, posts.created_at, posts.updated_at from posts LEFT JOIN users on users.id = posts.poster_id ORDER BY posts.created_at desc;'
         results = connectToMySQL(DATABASE).query_db(query)
         all_posts = []
         for post in results:
@@ -39,7 +63,7 @@ class Post:
     @classmethod
     def get_by_id(cls, id):
         data = {'id': int(id)}
-        query = 'SELECT posts.id, poster_id, content, users.username as poster_username from posts LEFT JOIN users on users.id = posts.poster_id WHERE posts.id = %(id)s;'
+        query = 'SELECT posts.id, poster_id, content, users.username as poster_username, posts.created_at, posts.updated_at from posts LEFT JOIN users on users.id = posts.poster_id WHERE posts.id = %(id)s;'
         results = connectToMySQL(DATABASE).query_db(query, data)
         return cls(results[0])
 
@@ -47,12 +71,21 @@ class Post:
     @classmethod
     def get_by_uploader(cls, user_id):
         data = {'user_id': int(user_id)}
-        query = 'SELECT posts.id, poster_id, content, users.username as poster_username from posts LEFT JOIN users on users.id = posts.poster_id WHERE users.id = %(user_id)s;'
+        query = 'SELECT posts.id, poster_id, content, users.username as poster_username, posts.created_at, posts.updated_at from posts LEFT JOIN users on users.id = posts.poster_id WHERE users.id = %(user_id)s;'
         results = connectToMySQL(DATABASE).query_db(query, data)
         all_posts = []
         for post in results:
             all_posts.append(cls(post))
         return all_posts
+
+    # method for running a custom query and return a list of post objects
+    @classmethod
+    def get_with_filters(cls, query):
+        results = connectToMySQL(DATABASE).query_db(query)
+        posts = []
+        for post in results:
+            posts.append(cls(post))
+        return posts
 
     # method for determining how many lit a post has. returns number of lits
     @staticmethod
@@ -99,7 +132,7 @@ class Post:
             comments = comments[0]['count(id)']
         return comments
 
-    # method for getting all comments. returns a list of all comment objects
+    # method for getting all comments. returns a list of all comments
     @staticmethod
     def get_all_comments(post_id):
         data = {'post_id': post_id}
@@ -133,26 +166,26 @@ class Post:
         return
 
     # method for validating magazine creation. returns True if valid, False if invalid. creates flash messages along the way
-    @staticmethod
-    def validate(data):
-        valid_inputs = True
-        # validate title length
-        if (len(data['title']) < 2):
-            flash('Magazine title must be at least 2 characters', 'title')
-            valid_inputs = False
-        # validate description length
-        if (len(data['description']) < 10):
-            flash('Magazine description must be at least 10 characters', 'description')
-            valid_inputs = False
-        return valid_inputs
+    # @staticmethod
+    # def validate(data):
+    #     valid_inputs = True
+    #     # validate title length
+    #     if (len(data['title']) < 2):
+    #         flash('Magazine title must be at least 2 characters', 'title')
+    #         valid_inputs = False
+    #     # validate description length
+    #     if (len(data['description']) < 10):
+    #         flash('Magazine description must be at least 10 characters', 'description')
+    #         valid_inputs = False
+    #     return valid_inputs
 
     # method for deleting a recipe
-    @classmethod
-    def delete(cls, id):
-        data = {'id': id}
-        query = 'DELETE from magazines where id = %(id)s;'
-        connectToMySQL(DATABASE).query_db(query, data)
-        return
+    # @classmethod
+    # def delete(cls, id):
+    #     data = {'id': id}
+    #     query = 'DELETE from magazines where id = %(id)s;'
+    #     connectToMySQL(DATABASE).query_db(query, data)
+    #     return
 
     # method for determining how many lits a post has
     # untested
@@ -162,3 +195,12 @@ class Post:
         query = 'SELECT count(user_id) FROM fires WHERE post_id = %(id)s GROUP BY post_id;'
         result = connectToMySQL(DATABASE).query_db(query, data)
         return int(result)
+
+    # method for getting the ratio of a post. returns ratio
+    @staticmethod
+    def get_ratio(comment_count, lit_count):
+        if lit_count == 0:
+            return comment_count * 0.1
+        if comment_count == 0:
+            return lit_count * -0.1
+        return comment_count / lit_count

@@ -5,6 +5,7 @@
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- custom user theme -->
   {% if session['theme'] == 'light' %}
     <link rel="stylesheet"  type="text/css" href="{{url_for('.static', filename='default.bootstrap.min.css')}}">
   {% elif session['theme'] == 'dark' %}
@@ -16,31 +17,40 @@
   <title>Friendbookspacetter</title>
 </head>
 
-<!-- post filters need to be auto-populated -->
-
 <body>
   <!-- navbar -->
-  <nav class="navbar navbar-expand-lg bg-secondary justify-content-between py-0 px-5 shadow sticky-top text-dark">
-    <div class="leftContent d-flex ms-5 mt-2">
-      <!-- could replace this with just a clickable logo -->
-      <p>Logo</p>
-      <p class="mx-2">|</p>
-      <a href="/home" class="nav-link">Home</a>
-    </div>
-    <div class="searchbar d-flex">
-      <input type="text" name="searchbar" id="searchbar" placeholder="Search..." class="form-control me-2">
-      <button class="btn btn-primary">Search</button>
-    </div>
-    <div class="nav-item dropdown me-5">
-      <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Account</a>
-      <ul class="dropdown-menu">
-        <li><a class="dropdown-item" href="/profile/{{session['user_id']}}" target="_self">Profile</a></li>
-        <li><a class="dropdown-item" href="/friends" target="_self">Friends List</a></li>
-        <li><a class="dropdown-item" href="/settings" target="_self">Settings</a></li>
-        <li><a class="dropdown-item" href="/sign_out" target="_self">Sign Out</a></li>
-      </ul>
-    </div>
-  </nav>
+  {% if 'user_id' in session %}
+    <nav class="navbar navbar-expand-lg bg-secondary justify-content-between py-0 px-5 shadow sticky-top text-dark">
+      <div class="leftContent d-flex ms-5 mt-2">
+        <!-- could replace this with just a clickable logo -->
+        <p>Logo</p>
+        <p class="mx-2">|</p>
+        <a href="/home" class="nav-link">Home</a>
+      </div>
+      <div class="searchbar d-flex">
+        <input type="text" name="searchbar" id="searchbar" placeholder="Search..." class="form-control me-2">
+        <button class="btn btn-primary">Search</button>
+      </div>
+      <div class="nav-item dropdown me-5">
+        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">Account</a>
+        <ul class="dropdown-menu">
+          <li><a class="dropdown-item" href="/profile/{{session['user_id']}}" target="_self">Profile</a></li>
+          <li><a class="dropdown-item" href="/friends" target="_self">Friends List</a></li>
+          <li><a class="dropdown-item" href="/settings" target="_self">Settings</a></li>
+          <li><a class="dropdown-item" href="/sign_out" target="_self">Sign Out</a></li>
+        </ul>
+      </div>
+    </nav>
+  {% else %}
+    <nav class="navbar navbar-expand-lg bg-secondary justify-content-between py-0 px-5 shadow sticky-top text-dark">
+      <div class="leftContent d-flex ms-5 mt-2">
+        <p>Logo</p>
+        <p class="mx-2">|</p>
+        <a href="/home" class="nav-link">Home</a>
+      </div>
+      <a href="/" class="nav-link me-5">Sign In</a>
+    </nav>
+  {% endif %}
   <!-- main content -->
   <div class="container d-flex my-5">
     <!-- left column -->
@@ -160,41 +170,37 @@
     </div>
     <!-- right column -->
     <div class="col-4 ms-5">
-      <form action="CHANGE_LATER" method="post">
+      <form action="/home" method="post">
         <!-- show by -->
         <h4>Show Posts By:</h4>
-        <input type="radio" name="sort" id="chronological_sort" value="chronological" class="me-1">
+        <input type="radio" name="sort" id="chronological_sort" value="chronological" class="me-1"{% if sort['sort'] == 'chronological' %} checked="true"{% endif %}>
         <label for="chronological_sort">Chronological</label><br>
-        <input type="radio" name="sort" id="lit_sort" value="lit" class="me-1">
+        <input type="radio" name="sort" id="lit_sort" value="lit" class="me-1"{% if sort['sort'] == 'lit' %} checked="true"{% endif %}>
         <label for="lit_sort">Most 🔥</label><br>
-        <input type="radio" name="sort" id="comments_sort" value="comments" class="me-1">
+        <input type="radio" name="sort" id="comments_sort" value="comments" class="me-1"{% if sort['sort'] == 'comments' %} checked="true"{% endif %}>
         <label for="comments_sort">Most Comments</label><br>
-        <input type="radio" name="sort" id="ratio_sort" value="ratio" class="me-1">
+        <input type="radio" name="sort" id="ratio_sort" value="ratio" class="me-1"{% if sort['sort'] == 'ratio' %} checked="true"{% endif %}>
         <label for="ratio_sort">Biggest Ratio</label>
         <!-- show from -->
         <h4 class="mt-3">Show Posts From:</h4>
-        <input type="radio" name="show_time" id="show_today" value="today" class="me-1">
+        <input type="radio" name="show_time" id="show_today" value="today" class="me-1"{% if sort['show_time'] == 'today' %} checked="true"{% endif %}>
         <label for="show_today">Today</label><br>
-        <input type="radio" name="show_time" id="show_week" value="week" class="me-1">
+        <input type="radio" name="show_time" id="show_week" value="week" class="me-1"{% if sort['show_time'] == 'week' %} checked="true"{% endif %}>
         <label for="show_week">This Week</label><br>
-        <input type="radio" name="show_time" id="show_month" value="month" class="me-1">
+        <input type="radio" name="show_time" id="show_month" value="month" class="me-1"{% if sort['show_time'] == 'month' %} checked="true"{% endif %}>
         <label for="show_month">This Month</label><br>
-        <input type="radio" name="show_time" id="show_all" value="all" class="me-1">
+        <input type="radio" name="show_time" id="show_all" value="all" class="me-1"{% if sort['show_time'] == 'all' %} checked="true"{% endif %}>
         <label for="show_all">All Time</label>
         <!-- show users -->
         <h4 class="mt-3">Show Users:</h4>
-        <input type="checkbox" name="show_users" id="friends" value="friends" class="me-1">
+        <input type="checkbox" name="show_friends" id="friends" value='true' class="me-1"{% if sort['show_friends'] == 'true' %} checked="true"{% endif %}>
         <label for="friends">Friends</label><br>
-        <input type="checkbox" name="show_users" id="friends_of_friends" value="friends_of_friends" class="me-1">
+        <input type="checkbox" name="show_friends_of_friends" id="friends_of_friends" value='true' class="me-1"{% if sort['show_friends_of_friends'] == 'true' %} checked="true"{% endif %}>
         <label for="friends_of_friends">Friends of Friends</label><br>
-        <input type="checkbox" name="show_users" id="celebrities" value="celebrities" class="me-1">
+        <input type="checkbox" name="show_celebrities" id="celebrities" value='true' class="me-1"{% if sort['show_celebrities'] == 'true' %} checked="true"{% endif %}>
         <label for="celebrities">Celebrities</label><br>
-
-        <!-- everybody button disabled until "select all" functionality is implemented -->
-        <!-- https://stackoverflow.com/questions/386281/how-to-implement-select-all-check-box-in-html -->
-        <!-- <input type="checkbox" name="show_users" id="everybody" value="everybody" class="me-1"> -->
-        <!-- <label for="everybody">Everybody</label><br> -->
-
+        <input type="checkbox" name="show_everyone" id="everyone" value='true' class="me-1"{% if sort['show_everyone'] == 'true' %} checked="true"{% endif %}>
+        <label for="everyone">Everyone</label><br>
         <!-- button -->
         <button class="btn btn-primary mt-3">Update Feed</button>
       </form>
