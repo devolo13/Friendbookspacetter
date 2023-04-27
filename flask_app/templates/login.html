@@ -6,7 +6,6 @@
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet"  type="text/css" href="{{url_for('.static', filename='default.bootstrap.min.css')}}">
-  <link rel="stylesheet"  type="text/css" href="{{url_for('.static', filename='style.css')}}">
   <title>Login</title>
 </head>
 
@@ -36,6 +35,7 @@
           {% for message in get_flashed_messages(category_filter='register_password') %}
             <p class="text-danger">{{message}}</p>
           {% endfor %}
+          <!-- password confirmation -->
           <label for="register_confirm_password">Confirm Password:</label>
           <input type="password" name="confirm_password" id="register_confirm_password" class="form-control my-2">
           {% for message in get_flashed_messages(category_filter='confirm_password') %}

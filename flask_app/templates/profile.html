@@ -14,15 +14,14 @@
     <link rel="stylesheet"  type="text/css" id="bootstrap_stylesheet" href="{{user.theme}}">
   {% endif %}
   <link rel="stylesheet"  type="text/css" href="{{url_for('.static', filename='style.css')}}">
-  <title>Username's Profile</title>
+  <title>{{user.username}}'s Profile</title>
 </head>
 
 <body>
   <!-- navbar -->
   <nav class="navbar navbar-expand-lg bg-secondary justify-content-between py-0 px-5 shadow sticky-top text-dark">
     <div class="leftContent d-flex ms-5 mt-2">
-      <!-- could replace this with just a clickable logo -->
-      <p>Logo</p>
+      <p>FBST</p>
       <p class="mx-2">|</p>
       <a href="/home" class="nav-link">Home</a>
     </div>
@@ -44,6 +43,7 @@
   <div class="container d-flex my-5">
     <!-- left column -->
     <div class="col-4 me-5">
+      <!-- user information -->
       <img src="{{url_for('.static', filename='placeholderPFP.jpg')}}" alt="placeholder profile picture" class="main_profile_pic ms-5 mb-2">
       <h3>{{user.username}}</h3>
       <p class="ms-4">{{user.bio}}</p>
@@ -52,9 +52,9 @@
         <button class="btn btn-primary mb-2" onclick="window.location.href='/add_friend/profile/{{user.id}}';">Add Friend</button>
       {% endif %}
       {% endif %}
-      <!-- embeded youtube video here -->
+      <!-- embedded youtube video -->
       {% if not user.video == 'none' %}
-      <iframe width="100%" height="40%" src="{{user.video}}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
+        <iframe width="100%" height="40%" src="{{user.video}}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" allowfullscreen></iframe>
       {% endif %}
     </div>
     <!-- right column -->
@@ -77,53 +77,59 @@
         </div>
       {% endif %}
       {% if all_posts == None %}
-      <h2>Posts</h2>
-      <p class="ms-4">This user has no posts</p>
+        <h2>Posts</h2>
+        <p class="ms-4">This user has no posts</p>
       {% else %}
-      <h2>Most Popular Post:</h2>
-      <!-- text post -->
-      <div class="text_only_post d-flex mt-4 ms-3">
-        <div class="post ms-3">
-          <p>{{popular_post.content}}</p>
-          <div class="d-flex justify-content-between">
-            <div class="d-flex">
-              <a href="/post/{{popular_post.id}}" class="link-secondary text-decoration-none">{{popular_post.lit_count}} 🔥</a>
-              <a href="/post/{{popular_post.id}}" class="link-secondary text-decoration-none mx-3">{{popular_post.comments}} comments</a>
-            </div>
-            <div class="d-flex">
-              {% if not session['user_id'] in popular_post.lit_users %}
-                <form action="/add_lit/{{popular_post.id}}/home">
-                  <button class="btn btn-primary" type="submit">🔥</button>
-                </form>
-              {% endif %}
-              <button class="btn btn-primary ms-2" onclick="window.location.href='/post/{{popular_post.id}}';">comment</button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <h2 class="mt-5">Most Recent Posts:</h2>
-      {% for post in all_posts %}
-      <!-- text post -->
-      <div class="text_only_post d-flex mt-4 ms-3">
-        <div class="post ms-3">
-          <p>{{post.content}}</p>
-          <div class="d-flex justify-content-between">
-            <div class="d-flex">
-              <a href="/post/{{post.id}}" class="link-secondary text-decoration-none">{{post.lit_count}} 🔥</a>
-              <a href="/post/{{post.id}}" class="link-secondary text-decoration-none mx-3">{{post.comments}} comments</a>
-            </div>
-            <div class="d-flex">
-              {% if not session['user_id'] in post.lit_users %}
-                <form action="/add_lit/{{post.id}}/home">
-                  <button class="btn btn-primary" type="submit">🔥</button>
-                </form>
-              {% endif %}
-              <button class="btn btn-primary ms-2" onclick="window.location.href='/post/{{post.id}}';">comment</button>
+        <h2>Most Popular Post:</h2>
+        <!-- text post -->
+        <div class="text_only_post d-flex mt-4 ms-3">
+          <div class="post ms-3">
+            <p>{{popular_post.content}}</p>
+            <div class="d-flex justify-content-between">
+              <div class="d-flex">
+                <a href="/post/{{popular_post.id}}" class="link-secondary text-decoration-none">{{popular_post.lit_count}} 🔥</a>
+                <a href="/post/{{popular_post.id}}" class="link-secondary text-decoration-none mx-3">{{popular_post.comments}} comments</a>
+                {% if not popular_post.created_at == popular_post.updated_at %}
+                  <a href="/post/{{popular_post.id}}" class="ms-3 text-decoration-none link-secondary">* Edited</a>
+                {% endif %}
+              </div>
+              <div class="d-flex">
+                {% if not session['user_id'] in popular_post.lit_users %}
+                  <form action="/add_lit/{{popular_post.id}}/home">
+                    <button class="btn btn-primary" type="submit">🔥</button>
+                  </form>
+                {% endif %}
+                <button class="btn btn-primary ms-2" onclick="window.location.href='/post/{{popular_post.id}}';">comment</button>
+              </div>
             </div>
           </div>
         </div>
-      </div>
-      {% endfor %}
+        <h2 class="mt-5">Most Recent Posts:</h2>
+        {% for post in all_posts %}
+          <!-- text post -->
+          <div class="text_only_post d-flex mt-4 ms-3">
+            <div class="post ms-3">
+              <p>{{post.content}}</p>
+              <div class="d-flex justify-content-between">
+                <div class="d-flex">
+                  <a href="/post/{{post.id}}" class="link-secondary text-decoration-none">{{post.lit_count}} 🔥</a>
+                  <a href="/post/{{post.id}}" class="link-secondary text-decoration-none mx-3">{{post.comments}} comments</a>
+                  {% if not post.created_at == post.updated_at %}
+                    <a href="/post/{{post.id}}" class="ms-3 text-decoration-none link-secondary">* Edited</a>
+                  {% endif %}
+                </div>
+                <div class="d-flex">
+                  {% if not session['user_id'] in post.lit_users %}
+                    <form action="/add_lit/{{post.id}}/home">
+                      <button class="btn btn-primary" type="submit">🔥</button>
+                    </form>
+                  {% endif %}
+                  <button class="btn btn-primary ms-2" onclick="window.location.href='/post/{{post.id}}';">comment</button>
+                </div>
+              </div>
+            </div>
+          </div>
+        {% endfor %}
       {% endif %}
     </div>
   </div>

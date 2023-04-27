@@ -1,28 +1,28 @@
-textarea{
+textarea {
   resize: none;
 }
 
-.profile_pic{
+.profile_pic {
   width: 6rem;
   height: 6rem;
   border-radius: 50%;
 }
 
-.main_profile_pic{
+.main_profile_pic {
   width: 20rem;
   height: 20rem;
   border-radius: 50%;
 }
 
-.post_pic{
+.post_pic {
   max-width: 35vw;
   max-height: 40vh;
 }
 
-.post_interactions{
+.post_interactions {
   width: 100%;
 }
 
-.post{
+.post {
   width: 100%;
 }

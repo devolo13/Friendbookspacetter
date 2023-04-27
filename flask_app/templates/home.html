@@ -20,10 +20,10 @@
 <body>
   <!-- navbar -->
   {% if 'user_id' in session %}
+    <!-- if user is signed in, show the standard navbar -->
     <nav class="navbar navbar-expand-lg bg-secondary justify-content-between py-0 px-5 shadow sticky-top text-dark">
       <div class="leftContent d-flex ms-5 mt-2">
-        <!-- could replace this with just a clickable logo -->
-        <p>Logo</p>
+        <p>FBST</p>
         <p class="mx-2">|</p>
         <a href="/home" class="nav-link">Home</a>
       </div>
@@ -42,6 +42,7 @@
       </div>
     </nav>
   {% else %}
+    <!-- if user isn't signed in show a different navbar -->
     <nav class="navbar navbar-expand-lg bg-secondary justify-content-between py-0 px-5 shadow sticky-top text-dark">
       <div class="leftContent d-flex ms-5 mt-2">
         <p>Logo</p>
@@ -56,7 +57,7 @@
     <!-- left column -->
     <div class="col-8 me-5">
       <div class="new_post">
-        <p>Create a post</p>
+        <p>Post your thoughts</p>
         {% for message in get_flashed_messages(category_filter='new_post') %}
           <p class="text-danger">{{message}}</p>
         {% endfor %}
@@ -70,7 +71,7 @@
         </form>
       </div>
       {% for post in all_posts %}
-        <!-- text post -->
+        <!-- user post -->
         <div class="text_only_post d-flex mt-5">
           <a href="/profile/{{post.poster_id}}"><img src="{{url_for('.static', filename='placeholderPFP.jpg')}}" alt="placeholder profile pic" class="profile_pic"></a>
           <div class="post ms-3">
@@ -79,8 +80,10 @@
             <div class="post_interactions d-flex justify-content-between">
               <div class="d-flex">
                 <a href="/post/{{post.id}}" class="link-secondary text-decoration-none">{{post.lit_count}} 🔥</a>
-                <!-- comments should be link with href to that post's page -->
                 <a href="/post/{{post.id}}" class="ms-3 text-decoration-none link-secondary">{{post.comments}} comment{% if not post.comments == 1 %}s{% endif %}</a>
+                {% if not post.created_at == post.updated_at %}
+                  <a href="/post/{{post.id}}" class="ms-3 text-decoration-none link-secondary">* Edited</a>
+                {% endif %}
               </div>
               <div class="d-flex">
                 {% if not session['user_id'] in post.lit_users %}
@@ -94,79 +97,6 @@
           </div>
         </div>
       {% endfor %}
-      <!-- text post -->
-      <!-- <div class="text_only_post d-flex mt-5">
-        <img src="{{url_for('.static', filename='placeholderPFP.jpg')}}" alt="placeholder profile pic" class="profile_pic">
-        <div class="post ms-3">
-          <p>Username</p>
-          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eaque consequatur quis quam quibusdam voluptas animi vitae, quaerat explicabo consequuntur, illo maxime accusamus neque obcaecati nostrum, consectetur facere. Molestiae, ab itaque.</p>
-          <div class="d-flex justify-content-between">
-            <div class="d-flex">
-              <p># 🔥</p>
-              <p class="ms-3"># comments</p>
-            </div>
-            <div class="d-flex">
-              <button class="btn btn-primary me-2">🔥</button>
-              <button class="btn btn-primary">comment</button>
-            </div>
-          </div>
-        </div>
-      </div> -->
-      <!-- image post -->
-      <!-- <div class="image_post d-flex mt-5">
-        <img src="{{url_for('.static', filename='placeholderPFP.jpg')}}" alt="placeholder profile pic" class="profile_pic">
-        <div class="post ms-3">
-          <p>Username</p>
-          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eaque consequatur quis quam quibusdam voluptas animi vitae, quaerat explicabo consequuntur.</p>
-          <img src="{{url_for('.static', filename='placeholderPost.jpg')}}" alt="placeholder_post" class="post_pic">
-          <div class="d-flex justify-content-between mt-2">
-            <div class="d-flex">
-              <p># 🔥</p>
-              <p class="ms-3"># comments</p>
-            </div>
-            <div class="d-flex">
-              <button class="btn btn-primary me-2">🔥</button>
-              <button class="btn btn-primary">comment</button>
-            </div>
-          </div>
-        </div>
-      </div> -->
-      <!-- text post -->
-      <!-- <div class="text_only_post d-flex mt-5">
-        <img src="{{url_for('.static', filename='placeholderPFP.jpg')}}" alt="placeholder profile pic" class="profile_pic">
-        <div class="post ms-3">
-          <p>Username</p>
-          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eaque consequatur quis quam quibusdam voluptas animi vitae, quaerat explicabo consequuntur, illo maxime accusamus neque obcaecati nostrum, consectetur facere. Molestiae, ab itaque.</p>
-          <div class="d-flex justify-content-between">
-            <div class="d-flex">
-              <p># 🔥</p>
-              <p class="ms-3"># comments</p>
-            </div>
-            <div class="d-flex">
-              <button class="btn btn-primary me-2">🔥</button>
-              <button class="btn btn-primary">comment</button>
-            </div>
-          </div>
-        </div>
-      </div> -->
-      <!-- text post -->
-      <!-- <div class="text_only_post d-flex mt-5">
-        <img src="{{url_for('.static', filename='placeholderPFP.jpg')}}" alt="placeholder profile pic" class="profile_pic">
-        <div class="post ms-3">
-          <p>Username</p>
-          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eaque consequatur quis quam quibusdam voluptas animi vitae, quaerat explicabo consequuntur, illo maxime accusamus neque obcaecati nostrum, consectetur facere. Molestiae, ab itaque.</p>
-          <div class="d-flex justify-content-between">
-            <div class="d-flex">
-              <p># 🔥</p>
-              <p class="ms-3"># comments</p>
-            </div>
-            <div class="d-flex">
-              <button class="btn btn-primary me-2">🔥</button>
-              <button class="btn btn-primary">comment</button>
-            </div>
-          </div>
-        </div>
-      </div> -->
     </div>
     <!-- right column -->
     <div class="col-4 ms-5">

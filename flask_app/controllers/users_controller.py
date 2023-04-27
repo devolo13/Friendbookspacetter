@@ -70,6 +70,8 @@ def update_user():
         'id': session['user_id']
     }
     if User.validate_update_inputs(data):
+        if data['video'] == '':
+            data['video'] = 'none'
         if not data['video'][:29] == 'https://www.youtube.com/embed':
             if not data['video'] == 'none':
                 data['video'] = 'https://www.youtube.com/embed' + data['video'][16:]
@@ -106,7 +108,7 @@ def user_settings():
     return render_template('settings.html', user=user)
 
 
-# template for showing a user's friends
+# template for showing a user's friends. gets a list of all friends and separates the celebrities
 @app.route('/friends')
 def friends_page():
     if not 'user_id' in session:
